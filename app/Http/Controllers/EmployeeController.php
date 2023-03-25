@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\EmployeeResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
-/**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -17,9 +18,11 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = Employee::all();
-        return response([ 'employees' =>
-        EmployeeResource::collection($employees),
-        'message' => 'Successful'], 200);
+        return response([
+            'employees' =>
+            EmployeeResource::collection($employees),
+            'message' => 'Successful'
+        ], 200);
     }
 
     /**
@@ -39,16 +42,20 @@ class EmployeeController extends Controller
             'salary' => 'required|max:50'
         ]);
 
-        if($validator->fails()){
-            return response(['error' => $validator->errors(),
-            'Validation Error']);
+        if ($validator->fails()) {
+            return response([
+                'error' => $validator->errors(),
+                'Validation Error'
+            ]);
         }
 
         $employee = Employee::create($data);
 
-        return response([ 'employee' => new
-        EmployeeResource($employee),
-        'message' => 'Success'], 200);
+        return response([
+            'employee' => new
+                EmployeeResource($employee),
+            'message' => 'Success'
+        ], 200);
     }
 
     /**
@@ -59,9 +66,8 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        return response([ 'employee' => new
-        EmployeeResource($employee), 'message' => 'Success'], 200);
-
+        return response(['employee' => new
+            EmployeeResource($employee), 'message' => 'Success'], 200);
     }
 
     /**
@@ -76,8 +82,8 @@ class EmployeeController extends Controller
 
         $employee->update($request->all());
 
-        return response([ 'employee' => new
-        EmployeeResource($employee), 'message' => 'Success'], 200);
+        return response(['employee' => new
+            EmployeeResource($employee), 'message' => 'Success'], 200);
     }
 
     /**

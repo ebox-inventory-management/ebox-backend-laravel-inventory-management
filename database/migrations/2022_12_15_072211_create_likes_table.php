@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('employees', function (Blueprint $table) {
-           $table->id();
-            $table->string('name');
-            $table->string('age');
-            $table->string('job');
-            $table->string('salary');
+        Schema::create('likes', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('post_id')->unsigned();
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('likes');
     }
 };
