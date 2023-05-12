@@ -19,28 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/user/{id}', [UserAuthController::class, 'update']);
 Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
-
-
-
-// post routes
-Route::apiResource('/post', PostController::class)->middleware('auth:api');
-// postlike routes
-Route::get('/like/{id}', [LikesController::class, 'getLikesByPostId'])->middleware('auth:api');
-Route::post('/like', [LikesController::class, 'likePost'])->middleware('auth:api');
-Route::delete('/like/{id}', [LikesController::class, 'unlikePost'])->middleware('auth:api');
-// comment routes
-Route::post('/comment', [CommentController::class, 'store'])->middleware('auth:api');
-Route::post('/comment/{id}', [CommentController::class, 'destroy'])->middleware('auth:api');
-
-
-
-
-Route::apiResource('/employee', EmployeeController::class)->middleware('auth:api');
+Route::get('/user', [UserAuthController::class, 'show']);

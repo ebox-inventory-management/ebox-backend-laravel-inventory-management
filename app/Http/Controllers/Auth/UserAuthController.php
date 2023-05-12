@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class UserAuthController extends Controller
 {
+
+    public function show()
+    {
+
+        return auth()->guard('api')->user();
+    }
+
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -42,8 +49,10 @@ class UserAuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return response(['error_message' => 'Incorrect Details.
-            Please try again']);
+            return response([
+                'error_message' => 'Incorrect Details.
+            Please try again'
+            ]);
         }
 
         $token = auth()->user()->createToken('API Token')->accessToken;
