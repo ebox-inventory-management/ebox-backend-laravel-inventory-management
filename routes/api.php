@@ -1,13 +1,15 @@
 <?php
 
 use App\Http\Controllers\Auth\UserAuthController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\LikesController;
-use App\Http\Controllers\PostController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,6 +21,56 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Customer
+Route::post("customer/add",[CustomerController::class,"saveCustomer"])->name("add-customer");
+Route::get("customers",[CustomerController::class,"getCustomers"])->name("all-customers");
+Route::get("customer/view/{id}",[CustomerController::class,"getCustomer"])->name("customer");
+Route::post("customer/update/{id}",[CustomerController::class,"updatedCustomer"])->name("update-customer");
+Route::get("customer/delete/{id}",[CustomerController::class,"deleteCustomer"])->name("delete-customer");
+
+//Supplier
+Route::post("supplier/add",[SupplierController::class,"saveSupplier"])->name("add-supplier");
+Route::get("suppliers",[SupplierController::class,"getSuppliers"])->name("all-suppliers");
+Route::get("supplier/view/{id}",[SupplierController::class,"getSupplier"])->name("suppliers");
+Route::post("supplier/update/{id}",[SupplierController::class,"updateSupplier"])->name("update-supplier");
+Route::get("supplier/delete/{id}",[SupplierController::class,"deleteSupplier"])->name("delete-supplier");
+
+
+//Category
+Route::post("category/add",[CategoryController::class,"saveCategory"])->name("addCategory");
+Route::get("categories",[CategoryController::class,"getCategories"])->name("categories");
+Route::get("category/view/{id}",[CategoryController::class,"getCategory"])->name("category");
+Route::post("category/update/{id}",[CategoryController::class,"updateCategory"])->name("updateCategory");
+Route::get("category/delete/{id}",[CategoryController::class,"deleteCategory"])->name("deleteCategory");
+
+//Brand
+Route::post("brand/add",[BrandController::class,"saveBrand"])->name("addBrand");
+Route::get("brands",[BrandController::class,"getBrands"])->name("brands");
+Route::post("brand/update/{id}",[BrandController::class,"updateBrand"])->name("updateBrand");
+Route::get("brand/delete/{id}",[BrandController::class,"deleteBrand"])->name("deleteBrands");
+
+//Product
+Route::post("product/add",[ProductController::class,"saveProduct"])->name("addProduct");
+Route::get("products",[ProductController::class,"getProducts"])->name("products");
+Route::get("product/edit/{id}",[ProductController::class,"getProduct"])->name("editProduct");
+Route::get("product/view/{id}",[ProductController::class,"getProduct"])->name("viewProduct");
+Route::post("product/update",[ProductController::class,"updateProduct"])->name("updateProduct");
+Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
+
+//Expense
+Route::post("income/add",[IncomeController::class,"saveIncome"])->name("addIncome");
+Route::get("incomes",[IncomeController::class,"getIncomes"])->name("Income");
+Route::post("income/update/{id}",[IncomeController::class,"updateIncome"])->name("updateIncome");
+Route::get("incomes/{formDate}/{toDate}",[IncomeController::class,"getIncomeInRange"])->name("incomeInRange");
+Route::get("income/today",[IncomeController::class,"getTodayIncome"])->name("todayIncome");
+Route::get("income/month/{month}",[IncomeController::class,"getMonthIncome"])->name("monthlyIncome");
+Route::get("income/year",[IncomeController::class,"getYearIncome"])->name("yearlyIncome");
+
+
+
+//Adjustment
+Route::get("products/category/{cat_id}",[ProductController::class,"getProductByCategory"])->name("productsByCategory");
+Route::get("products/category/brand/{cat_id}/{brand_id}",[ProductController::class,"getProductByCategoryAndBrand"])->name("productsByCategoryAndBrand");
 
 
 Route::post('/register', [UserAuthController::class, 'register']);
