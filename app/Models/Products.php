@@ -10,9 +10,6 @@ class Products extends Model
     use HasFactory;
 
     protected $fillable = [
-        "category_id",
-        "supplier_id",
-        "brand_id",
         "product_name",
         "product_code",
         "product_garage",
@@ -23,7 +20,7 @@ class Products extends Model
         "buying_price",
         "price",
     ];
-    protected $with = ['category', 'brand', 'supplier'];
+    protected $with = ['category','brand','supplier'];
 
 
     public function category()

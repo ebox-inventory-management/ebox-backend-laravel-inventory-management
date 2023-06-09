@@ -11,17 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
 
-        Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('product_name');
-            $table->string('product_code');
-            $table->string('product_garage');
-            $table->string('product_route');
-            $table->string('product_image');
-            $table->string('buy_date');
-            $table->string('expire_date');
-            $table->string('buying_price');
-            $table->string('price');
+        Schema::table('products', function (Blueprint $table) {
+
             $table->foreignId('category_id')
                 ->constrained()
                 ->onUpdate('cascade')
@@ -34,7 +25,6 @@ return new class extends Migration {
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->timestamps();
 
         });
     }
@@ -44,6 +34,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('category_id');
+            $table->dropConstrainedForeignId('supplier_id');
+            $table->dropConstrainedForeignId('brand_id');
+        });
     }
 };
