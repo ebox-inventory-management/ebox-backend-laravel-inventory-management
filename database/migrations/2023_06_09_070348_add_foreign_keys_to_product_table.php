@@ -4,17 +4,38 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->foreign(['id'], 'Product_category_id_fkey')->references(['id'])->on('categories')->onUpdate('CASCADE')->onDelete('RESTRICT');
-            $table->foreign(['id'], 'Product_brand_id_fkey')->references(['id'])->on('brands')->onUpdate('CASCADE')->onDelete('RESTRICT');
-            $table->foreign(['id'], 'Product_supplier_id_fkey')->references(['id'])->on('suppliers')->onUpdate('CASCADE')->onDelete('RESTRICT');
+
+        Schema::create('products', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('product_name');
+            $table->string('product_code');
+            $table->string('product_garage');
+            $table->string('product_route');
+            $table->string('product_image');
+            $table->string('buy_date');
+            $table->string('expire_date');
+            $table->string('buying_price');
+            $table->string('price');
+            $table->foreignId('category_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('supplier_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('brand_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->timestamps();
+
         });
     }
 
@@ -23,11 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropForeign('Product_category_id_fkey');
-            $table->dropForeign('Product_brand_id_fkey');
-            $table->dropForeign('Product_supplier_id_fkey');
-
-        });
+        Schema::dropIfExists('products');
     }
 };

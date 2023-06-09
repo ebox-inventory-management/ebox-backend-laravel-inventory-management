@@ -8,64 +8,71 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function saveCategory(Request $request){
+    public function saveCategory(Request $request)
+    {
 
-        $this->validate($request,[
-            "category_name" => 'required|unique:categories'
+        $this->validate($request, [
+            "name" => 'required|unique:categories'
         ]);
 
         $category = new Category();
-        $category->category_name =  $request->category_name;
+        $category->name = $request->name;
         $category->save();
         return response()->json([
-            "message"=>"Category added successfully!",
-            "status"=>200
+            "message" => "Category added successfully!",
+            "status" => 200
         ]);
     }
 
-    public function getCategories(){
+    public function getCategories()
+    {
         $categories = Category::all();
         return response()->json([
-            "categories"=>$categories,
-            "status"=>200
+            "categories" => $categories,
+            "status" => 200
         ]);
 
     }
-    public function getCategory($id){
+    public function getCategory($id)
+    {
         $category = Category::findOrFail($id);
         return response()->json([
-            "supplier" =>$category,"status"=>200,
+            "supplier" => $category,
+            "status" => 200,
         ]);
     }
-    public function editCategory($id){
+    public function editCategory($id)
+    {
         $category = Category::findOrFail($id);
         return response()->json([
-            "category"=>$category,
-            "status"=>200
+            "category" => $category,
+            "status" => 200
         ]);
 
     }
 
-    public function updateCategory(Request $request,$id){
-//        $this->validate($request,[
+    public function updateCategory(Request $request, $id)
+    {
+        //        $this->validate($request,[
 //            "id" => 'required',
-//            "category_name" => 'required|unique:categories'
+//            "name" => 'required|unique:categories'
 //        ]);
         $category = Category::findOrFail($id);
-        $category->category_name =  $request->category_name;
+        $category->name = $request->name;
         $category->update();
         return response()->json([
-            "message"=>"Category updated successfully!",
-            "status"=>200
+            "message" => "Category updated successfully!",
+            "status" => 200
         ]);
     }
 
-    public function deleteCategory($id){
+    public function deleteCategory($id)
+    {
         $category = Category::findOrFail($id);
         $category->delete();
         return response()->json([
-            "message"=>"Category removed successfully!",
-            "status"=>200
+            "message" => "Category removed successfully!",
+            "status" => 200
         ]);
 
     }

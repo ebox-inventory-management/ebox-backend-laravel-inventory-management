@@ -4,31 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product;
+use App\Models\Products;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Faker\Provider\Image;
+
 class ProductController extends Controller
 {
-    protected function uploadProductImage($request){
+    protected function uploadProductImage($request)
+    {
         $productImage = $request->file('product_image');
-//        $imageType = $productImage->file('file');
-        $imageName = rand(100,100000).$request->product_name.'.jpg';
+        //        $imageType = $productImage->file('file');
+        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
         $directory = 'inventory/product-images/';
-        $imageUrl = $directory.$imageName;
+        $imageUrl = $directory . $imageName;
         Image::imageUrl($imageUrl);
         return $imageUrl;
 
     }
 
 
-    public function saveProduct(Request $request){
+    public function saveProduct(Request $request)
+    {
 
-        $imageUrl  = $this->uploadProductImage($request);
-        $product = new Product();
-        $product->cat_id = $request->cat_id;
-        $product->sup_id = $request->sup_id;
+        $imageUrl = $this->uploadProductImage($request);
+        $product = new Products();
+        $product->category_id = $request->category_id;
+        $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
         $product->product_name = $request->product_name;
         $product->product_code = $request->product_code;
@@ -44,46 +46,48 @@ class ProductController extends Controller
 
         $product->save();
         return response()->json([
-            "message"=>"Product added successfully!",
-            "status"=>200,
+            "message" => "Product added successfully!",
+            "status" => 200,
         ]);
 
     }
 
-    public function getProducts(){
-        $products = Product::all();
+    public function getProducts()
+    {
+        $products = Products::all();
         return response()->json([
-            "products"=>$products,
-            "status"=>200,
+            "products" => $products,
+            "status" => 200,
         ]);
     }
 
-    public function getProduct($id){
-        $product  = DB::table('products')
-            ->join('categories','categories.id','=','products.cat_id')
-            ->join('suppliers','suppliers.id','=','products.sup_id')
-            ->join('brands','brands.id','=','products.brand_id')
-            ->select('products.*','brands.name as brand_name','suppliers.name as sup_name','suppliers.id as sup_id','categories.category_name','categories.id as cat_id')
-            ->where('products.id','=',$id)
+    public function getProduct($id)
+    {
+        $product = Products::table('products')
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+            ->join('brands', 'brands.id', '=', 'products.brand_id')
+            ->select('products.*', 'brands.name as brand_name', 'suppliers.name as sup_name', 'suppliers.id as supplier_id', 'categories.category_name', 'categories.id as category_id')
+            ->where('products.id', '=', $id)
             ->first();
         return response()->json([
-            "product"=>$product,
-            "status"=>200,
+            "product" => $product,
+            "status" => 200,
         ]);
     }
 
-    public function updateProduct(UpdateProductRequest $request){
+    public function updateProduct(UpdateProductRequest $request)
+    {
 
-        $imageUrl='';
+        $imageUrl = '';
 
-        $product = Product::findOrFail($request->id);
-        if($request->hasFile('product_image'))
-        {
-            $imageUrl  = $this->uploadProductImage($request);
+        $product = Products::findOrFail($request->id);
+        if ($request->hasFile('product_image')) {
+            $imageUrl = $this->uploadProductImage($request);
             $product->product_image = $imageUrl;
         }
-        $product->cat_id = $request->cat_id;
-        $product->sup_id = $request->sup_id;
+        $product->category_id = $request->category_id;
+        $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
         $product->product_name = $request->product_name;
         $product->product_code = $request->product_code;
@@ -96,38 +100,39 @@ class ProductController extends Controller
         $product->update();
 
         return response()->json([
-            "message"=>"Product data updated successfully!",
-            "status"=>200,
+            "message" => "Product data updated successfully!",
+            "status" => 200,
         ]);
 
     }
 
-    public function deleteProduct($id){
-        $product = Product::findOrFail($id);
+    public function deleteProduct($id)
+    {
+        $product = Products::findOrFail($id);
         $product->delete();
         return response()->json([
-            "message"=>"Product removed successfully!",
-            "status"=>200,
+            "message" => "Product removed successfully!",
+            "status" => 200,
         ]);
 
 
     }
 
-    public function getProductByCategory($cat_id)
+    public function getProductByCategory($category_id)
     {
-        $products = Product::where('cat_id','=',$cat_id)->get();
+        $products = Products::where('category_id', '=', $category_id)->get();
         return response()->json([
-            "products"=>$products,
-            "status"=>200,
+            "products" => $products,
+            "status" => 200,
         ]);
     }
 
-    public function getProductByCategoryAndBrand($cat_id, $brand_id)
+    public function getProductByCategoryAndBrand($category_id, $brand_id)
     {
-        $products = Product::where('cat_id','=',$cat_id)->where('brand_id','=',$brand_id)->get();
+        $products = Products::where('category_id', '=', $category_id)->where('brand_id', '=', $brand_id)->get();
         return response()->json([
-            "products"=>$products,
-            "status"=>200,
+            "products" => $products,
+            "status" => 200,
         ]);
     }
 }

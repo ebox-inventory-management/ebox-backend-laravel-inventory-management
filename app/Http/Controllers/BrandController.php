@@ -16,38 +16,36 @@ class BrandController extends Controller
         $brand = new Brand();
 
         $brand->name = $request->name;
-        $brand->cat_id = $request->cat_id;
-        $brand->sup_id = $request->sup_id;
+
         $brand->save();
 
         return response()->json([
-            "message"=>"Brand added successfully!",
-            "status"=>200
+            "message" => "Brand added successfully!",
+            "status" => 200
         ]);
     }
 
     public function getBrands()
     {
-        $brands  = DB::table('brands');
+        $brands = Brand::all();
 
         return response()->json([
-            "brands"=>$brands,
-            "status"=>200
+            "brands" => $brands,
+            "status" => 200
         ]);
 
     }
 
-    public function updateBrand(Request $request,$id)
+    public function updateBrand(Request $request, $id)
     {
         $brand = Brand::findOrFail($id);
         $brand->name = $request->name;
-        $brand->cat_id = $request->cat_id;
-        $brand->sup_id = $request->sup_id;
+
         $brand->update();
 
         return response()->json([
-            "message"=>"Brand data updated successfully!",
-            "status"=>200
+            "message" => "Brand data updated successfully!",
+            "status" => 200
         ]);
     }
 
@@ -59,8 +57,8 @@ class BrandController extends Controller
         $brand->delete();
 
         return response()->json([
-            "message"=>"Brand deleted successfully!",
-            "status"=>200
+            "message" => "Brand deleted successfully!",
+            "status" => 200
         ]);
 
     }
