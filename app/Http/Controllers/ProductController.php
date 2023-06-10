@@ -103,7 +103,6 @@ class ProductController extends Controller
             "message" => "Product data updated successfully!",
             "status" => 200,
         ]);
-
     }
 
     public function deleteProduct($id)
@@ -130,6 +129,15 @@ class ProductController extends Controller
     public function getProductByCategoryAndBrand($category_id, $brand_id)
     {
         $products = Products::where('category_id', '=', $category_id)->where('brand_id', '=', $brand_id)->get();
+        return response()->json([
+            "products" => $products,
+            "status" => 200,
+        ]);
+    }
+
+    public function getProductByCategoryAndSupplier($category_id, $supplier_id)
+    {
+        $products = Products::where('category_id', '=', $category_id)->where('supplier_id', '=', $supplier_id)->get();
         return response()->json([
             "products" => $products,
             "status" => 200,

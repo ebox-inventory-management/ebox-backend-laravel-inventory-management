@@ -60,14 +60,8 @@ class IncomeController extends Controller
     public function getTodayIncome()
     {
 
-        $date = date("09/06/2023");
-        $todayIncome = DB::table('incomes')
-            ->where('date', '=', $date)
-            ->get();
-        return response()->json([
-            "todayIncome" => $todayIncome,
-            'status' => 200
-        ]);
+        $todayIncome = Income::whereDate('created_at', today())->sum('income_amount');
+        return response()->json(['today_income' => $todayIncome]);
     }
 
     public function getMonthIncome($month)

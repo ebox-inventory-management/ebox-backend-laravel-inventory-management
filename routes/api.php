@@ -52,7 +52,7 @@ Route::get("brand/delete/{id}",[BrandController::class,"deleteBrand"])->name("de
 //Product
 Route::post("product/add",[ProductController::class,"saveProduct"])->name("addProduct");
 Route::get("products",[ProductController::class,"getProducts"])->name("products");
-Route::get("product/edit/{id}",[ProductController::class,"getProduct"])->name("editProduct");
+Route::get("product/update/{id}",[ProductController::class,"getProduct"])->name("editProduct");
 Route::get("product/view/{id}",[ProductController::class,"getProduct"])->name("viewProduct");
 Route::post("product/update",[ProductController::class,"updateProduct"])->name("updateProduct");
 Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
@@ -68,9 +68,10 @@ Route::get("income/year",[IncomeController::class,"getYearIncome"])->name("yearl
 
 
 
-//Adjustment
+//Get Category
 Route::get("products/category/{cat_id}",[ProductController::class,"getProductByCategory"])->name("productsByCategory");
 Route::get("products/category/brand/{cat_id}/{brand_id}",[ProductController::class,"getProductByCategoryAndBrand"])->name("productsByCategoryAndBrand");
+Route::get("products/category/supplier/{cat_id}/{sup_id}",[ProductController::class,"getProductByCategoryAndSupplier"])->name("productsByCategoryAndSupplier");
 
 
 Route::post('/register', [UserAuthController::class, 'register']);
