@@ -12,6 +12,7 @@ class Category extends Model
         'name'
     ];
 
+    protected $with = ['products'];
 
     public function products()
     {

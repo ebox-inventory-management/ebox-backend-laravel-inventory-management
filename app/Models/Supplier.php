@@ -21,6 +21,7 @@ class Supplier extends Model
         "bank_name",
         "bank_number",
     ];
+    protected $with = ['products'];
 
 
     public function products()
