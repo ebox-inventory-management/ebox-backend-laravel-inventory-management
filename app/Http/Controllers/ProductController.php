@@ -59,10 +59,10 @@ class ProductController extends Controller
     public function getProducts()
     {
         $products = Products::all();
-        $total = Income::sum('product_quantity', "*" , 'price');
+
         return response()->json([
             "products" => $products,
-            "total" => $total,
+
             "status" => 200,
         ]);
     }

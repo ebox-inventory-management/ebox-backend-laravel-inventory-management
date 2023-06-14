@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\UserAuthController;
 
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
@@ -56,9 +57,18 @@ Route::get("products",[ProductController::class,"getProducts"])->name("products"
 Route::post("product/update/{id}",[ProductController::class,"updateProduct"])->name("editProduct");
 Route::get("product/view/{id}",[ProductController::class,"getProduct"])->name("viewProduct");
 Route::get("product/name/{product_name}",[ProductController::class,"getByName"])->name("viewProductName");
-    Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
+Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
 
 //Expense
+Route::get("expense",[ExpenseController::class,"getExpenses"])->name("expenses");
+Route::get("expense/view/{id_product}",[ExpenseController::class,"getExpense"])->name("viewProductExpenseByID");
+Route::get("expense/name/{product_name}",[ExpenseController::class,"getExpenseByName"])->name("viewProductExpenseByName");
+Route::get("expense/{formDate}/{toDate}",[ExpenseController::class,"getExpenseInRange"])->name("expenseInRange");
+Route::get("expense/today",[ExpenseController::class,"getTodayExpense"])->name("todayExpense");
+Route::get("expense/month",[ExpenseController::class,"getMonthExpense"])->name("monthlyExpense");
+Route::get("expense/year",[ExpenseController::class,"getYearExpense"])->name("yearlyExpense");
+
+//Income
 Route::post("income/add",[IncomeController::class,"saveIncome"])->name("addIncome");
 Route::get("incomes",[IncomeController::class,"getIncomes"])->name("Income");
 Route::post("income/update/{id}",[IncomeController::class,"updateIncome"])->name("updateIncome");
