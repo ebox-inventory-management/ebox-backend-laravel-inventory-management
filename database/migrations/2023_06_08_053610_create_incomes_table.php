@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incomes', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->text("income_details");
-            $table->string("income_amount");
+            $table->integer("income_amount");
             $table->string("date");
             $table->string("month");
             $table->string("year");

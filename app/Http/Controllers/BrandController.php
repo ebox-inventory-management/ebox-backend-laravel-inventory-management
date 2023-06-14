@@ -6,6 +6,7 @@ use App\Http\Requests\SaveBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
 
 use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +35,16 @@ class BrandController extends Controller
             "status" => 200
         ]);
 
+    }
+
+
+    public function getBrand($id)
+    {
+        $brand = Brand::findOrFail($id);
+        return response()->json([
+            "brand" => $brand,
+            "status" => 200,
+        ]);
     }
 
     public function updateBrand(Request $request, $id)

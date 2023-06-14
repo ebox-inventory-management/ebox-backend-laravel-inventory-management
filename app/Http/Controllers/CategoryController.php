@@ -37,7 +37,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         return response()->json([
-            "supplier" => $category,
+            "category" => $category,
             "status" => 200,
         ]);
     }

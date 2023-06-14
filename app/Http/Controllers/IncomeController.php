@@ -71,8 +71,10 @@ class IncomeController extends Controller
             ->where('month', '=', $month)
             ->where('year', '=', $year)
             ->get();
+        $summonthIncome = Income::whereMonth('created_at', $month)->sum('income_amount');
         return response()->json([
             "monthIncome" => $monthIncome,
+            "total"=> $summonthIncome,
             'status' => 200
         ]);
     }
@@ -102,8 +104,10 @@ class IncomeController extends Controller
         $yearIncome = DB::table('incomes')
             ->where('year', '=', $year)
             ->get();
+        $summonthIncome = Income::whereYear('created_at', $year)->sum('income_amount');
         return response()->json([
             "yearIncome" => $yearIncome,
+            "total" => $summonthIncome,
             'status' => 200
         ]);
     }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Customer;
+use App\Models\Income;
 use App\Models\Products;
 
 use Illuminate\Http\Request;
@@ -33,14 +35,16 @@ class ProductController extends Controller
         $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
         $product->product_name = $request->product_name;
+        $product->product_quantity = $request->product_quantity;
         $product->product_code = $request->product_code;
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
         $product->product_image = $request->product_image;
         $product->buy_date = $request->buy_date;
         $product->expire_date = $request->expire_date;
-        $product->buying_price = $request->buying_price;
-        $product->price = $request->price;
+        $product->import_price = $request->import_price;
+        $product->export_price = $request->export_price;
+        $product->total_import = $product->product_quantity * $product->import_price;
 
 
 
@@ -55,28 +59,50 @@ class ProductController extends Controller
     public function getProducts()
     {
         $products = Products::all();
+        $total = Income::sum('product_quantity', "*" , 'price');
         return response()->json([
             "products" => $products,
+            "total" => $total,
             "status" => 200,
         ]);
     }
 
-    public function getProduct($id)
-    {
-        $product = Products::table('products')
-            ->join('categories', 'categories.id', '=', 'products.category_id')
-            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
-            ->join('brands', 'brands.id', '=', 'products.brand_id')
-            ->select('products.*', 'brands.name as brand_name', 'suppliers.name as sup_name', 'suppliers.id as supplier_id', 'categories.category_name', 'categories.id as category_id')
-            ->where('products.id', '=', $id)
-            ->first();
+
+    public function getProduct($id){
+        $product = Products::findOrFail($id);
         return response()->json([
-            "product" => $product,
-            "status" => 200,
+            "product" =>$product,"status"=>200,
         ]);
     }
 
-    public function updateProduct(UpdateProductRequest $request)
+    public function getByName($product_name)
+    {
+        $product = Products::where('product_name', '=',  $product_name)->first();
+
+        if ($product) {
+            return response()->json( [
+                "product" =>$product,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    }
+//    public function getProduct($id)
+//    {
+//        $product = Products::table('products')
+//            ->join('categories', 'categories.id', '=', 'products.category_id')
+//            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+//            ->join('brands', 'brands.id', '=', 'products.brand_id')
+//            ->select('products.*', 'brands.name as brand_name', 'suppliers.name as sup_name', 'suppliers.id as supplier_id', 'categories.category_name', 'categories.id as category_id')
+//            ->where('products.id', '=', $id)
+//            ->first();
+//        return response()->json([
+//            "product" => $product,
+//            "status" => 200,
+//        ]);
+//    }
+
+    public function updateProduct(Request $request)
     {
 
         $imageUrl = '';
@@ -90,13 +116,15 @@ class ProductController extends Controller
         $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
         $product->product_name = $request->product_name;
+        $product->product_quantity = $request->product_quantity;
         $product->product_code = $request->product_code;
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
         $product->buy_date = $request->buy_date;
         $product->expire_date = $request->expire_date;
-        $product->buying_price = $request->buying_price;
-        $product->price = $request->price;
+        $product->import_price = $request->import_price;
+        $product->export_price = $request->export_price;
+        $product->total_import = $product->product_quantity * $product->import_price;
         $product->update();
 
         return response()->json([

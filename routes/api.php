@@ -47,15 +47,16 @@ Route::get("category/delete/{id}",[CategoryController::class,"deleteCategory"])-
 Route::post("brand/add",[BrandController::class,"saveBrand"])->name("addBrand");
 Route::get("brands",[BrandController::class,"getBrands"])->name("brands");
 Route::post("brand/update/{id}",[BrandController::class,"updateBrand"])->name("updateBrand");
+Route::get("brand/view/{id}",[BrandController::class,"getBrand"])->name("viewBrand");
 Route::get("brand/delete/{id}",[BrandController::class,"deleteBrand"])->name("deleteBrands");
 
 //Product
 Route::post("product/add",[ProductController::class,"saveProduct"])->name("addProduct");
 Route::get("products",[ProductController::class,"getProducts"])->name("products");
-Route::get("product/update/{id}",[ProductController::class,"getProduct"])->name("editProduct");
+Route::post("product/update/{id}",[ProductController::class,"updateProduct"])->name("editProduct");
 Route::get("product/view/{id}",[ProductController::class,"getProduct"])->name("viewProduct");
-Route::post("product/update",[ProductController::class,"updateProduct"])->name("updateProduct");
-Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
+Route::get("product/name/{product_name}",[ProductController::class,"getByName"])->name("viewProductName");
+    Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
 
 //Expense
 Route::post("income/add",[IncomeController::class,"saveIncome"])->name("addIncome");
