@@ -15,10 +15,9 @@ class Products extends Model
         "product_garage",
         "product_route",
         "product_image",
-        "buy_date",
         "expire_date",
-        "buying_price",
-        "price",
+        "import_price",
+        "export_price",
     ];
 
 
@@ -35,5 +34,20 @@ class Products extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function import()
+    {
+        return $this->belongsTo(Import::class);
+    }
+
+    public function export()
+    {
+        return $this->belongsTo(Export::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

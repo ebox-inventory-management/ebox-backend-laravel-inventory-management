@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\UserAuthController;
 
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ImportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
@@ -77,7 +78,9 @@ Route::get("income/today",[IncomeController::class,"getTodayIncome"])->name("tod
 Route::get("income/month/{month}",[IncomeController::class,"getMonthIncome"])->name("monthlyIncome");
 Route::get("income/year",[IncomeController::class,"getYearIncome"])->name("yearlyIncome");
 
-
+//Import
+Route::post("import/add",[ImportController::class,"saveImport"])->name("addImport");
+Route::get("imports",[ImportController::class,"getImports"])->name("Imports");
 
 //Get Category
 Route::get("products/category/{cat_id}",[ProductController::class,"getProductByCategory"])->name("productsByCategory");

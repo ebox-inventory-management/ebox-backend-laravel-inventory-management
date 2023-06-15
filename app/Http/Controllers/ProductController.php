@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SaveProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Customer;
+use App\Models\Export;
+use App\Models\Import;
 use App\Models\Income;
 use App\Models\Products;
 
@@ -40,14 +42,10 @@ class ProductController extends Controller
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
         $product->product_image = $request->product_image;
-        $product->buy_date = $request->buy_date;
         $product->expire_date = $request->expire_date;
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
         $product->total_import = $product->product_quantity * $product->import_price;
-
-
-
         $product->save();
         return response()->json([
             "message" => "Product added successfully!",
@@ -120,7 +118,6 @@ class ProductController extends Controller
         $product->product_code = $request->product_code;
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
-        $product->buy_date = $request->buy_date;
         $product->expire_date = $request->expire_date;
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
@@ -164,6 +161,16 @@ class ProductController extends Controller
     }
 
     public function getProductByCategoryAndSupplier($category_id, $supplier_id)
+    {
+        $products = Products::where('category_id', '=', $category_id)->where('supplier_id', '=', $supplier_id)->get();
+        return response()->json([
+            "products" => $products,
+            "status" => 200,
+        ]);
+    }
+
+
+    public function getProductQuatity($category_id, $supplier_id)
     {
         $products = Products::where('category_id', '=', $category_id)->where('supplier_id', '=', $supplier_id)->get();
         return response()->json([

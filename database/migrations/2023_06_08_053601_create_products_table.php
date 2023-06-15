@@ -14,20 +14,18 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string("product_name");
-            $table->integer("product_quantity");
+            $table->string("product_name")->unique();
+            $table->string("product_quantity");
             $table->string("product_code");
             $table->string("product_garage");
             $table->string("product_route");
             $table->string("product_image");
-            $table->string("buy_date");
             $table->string("expire_date");
-            $table->string("import_price");
-            $table->string("export_price");
-            $table->decimal('total_import', 8, 2)->nullable();
+            $table->integer("import_price");
+            $table->integer("export_price");
+            $table->integer("total_import");
             $table->timestamps();
         });
-
     }
 
     /**
