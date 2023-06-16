@@ -15,15 +15,15 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("product_name")->unique();
-            $table->string("product_quantity");
-            $table->string("product_code");
-            $table->string("product_garage");
-            $table->string("product_route");
-            $table->string("product_image");
-            $table->string("expire_date");
-            $table->integer("import_price");
-            $table->integer("export_price");
-            $table->integer("total_import");
+            $table->integer("product_quantity")->default(0);
+            $table->string("product_code")->nullable();
+            $table->string("product_garage")->nullable();
+            $table->string("product_route")->nullable();
+            $table->string("product_image")->nullable();
+            $table->string("expire_date")->nullable();
+            $table->integer("import_price")->nullable();
+            $table->integer("export_price")->nullable();
+            $table->integer("total_import")->default(0);
             $table->timestamps();
         });
     }

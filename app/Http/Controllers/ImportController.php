@@ -9,15 +9,19 @@ use Illuminate\Http\Request;
 
 class ImportController extends Controller
 {
-    public function saveImport(Request $request)
+    public function saveImport(Request $request,$id)
     {
 
+        $product = Products::findOrFail($id);
+        $product->product_quantity = $product->product_quantity + $request->product_quantity;
+        $product->total_import = $product->product_quantity * $product->import_price;
+        $product->update();
+
         $import = new Import();
-        $import->product_id = $request->product_id;
-        $import->import_quantity = $request->import_quantity;
-
-
+        $import->product_id = $id;
+        $import->import_quantity = $request->product_quantity;
         $import->save();
+
         return response()->json([
             "message" => "Import added successfully!",
             "status" => 200,

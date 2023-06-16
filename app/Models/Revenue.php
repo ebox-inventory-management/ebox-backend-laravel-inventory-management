@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Export extends Model
+class Revenue extends Model
 {
     use HasFactory;
-
-    public function export()
-    {
-        return $this->hasMany(Products::class);
-    }
 }

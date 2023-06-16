@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\UserAuthController;
 
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\RevenueController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
@@ -70,17 +72,27 @@ Route::get("expense/month",[ExpenseController::class,"getMonthExpense"])->name("
 Route::get("expense/year",[ExpenseController::class,"getYearExpense"])->name("yearlyExpense");
 
 //Income
-Route::post("income/add",[IncomeController::class,"saveIncome"])->name("addIncome");
+Route::post("income/{id}",[IncomeController::class,"getIncome"])->name("getIncome");
 Route::get("incomes",[IncomeController::class,"getIncomes"])->name("Income");
-Route::post("income/update/{id}",[IncomeController::class,"updateIncome"])->name("updateIncome");
 Route::get("incomes/{formDate}/{toDate}",[IncomeController::class,"getIncomeInRange"])->name("incomeInRange");
 Route::get("income/today",[IncomeController::class,"getTodayIncome"])->name("todayIncome");
-Route::get("income/month/{month}",[IncomeController::class,"getMonthIncome"])->name("monthlyIncome");
+Route::get("income/month",[IncomeController::class,"getMonthIncome"])->name("monthlyIncome");
 Route::get("income/year",[IncomeController::class,"getYearIncome"])->name("yearlyIncome");
 
 //Import
-Route::post("import/add",[ImportController::class,"saveImport"])->name("addImport");
+Route::post("import/add/{id}",[ImportController::class,"saveImport"])->name("addImport");
 Route::get("imports",[ImportController::class,"getImports"])->name("Imports");
+
+//Export
+Route::post("export/add/{id}",[ExportController::class,"saveExport"])->name("addExport");
+Route::get("exports",[ExportController::class,"getExports"])->name("Exports");
+
+//Revenue
+Route::get("revenues",[RevenueController::class,"getRevenues"])->name("Revenues");
+Route::get("revenues/today",[RevenueController::class,"getTodayRevenue"])->name("todayRevenue");
+Route::get("revenues/month",[RevenueController::class,"getMonthRevenue"])->name("monthlyRevenue");
+Route::get("revenues/year",[RevenueController::class,"getYearRevenue"])->name("yearlyRevenue");
+Route::get("revenues/{formDate}/{toDate}",[RevenueController::class,"getRevenueInRange"])->name("revenuesInRange");
 
 //Get Category
 Route::get("products/category/{cat_id}",[ProductController::class,"getProductByCategory"])->name("productsByCategory");

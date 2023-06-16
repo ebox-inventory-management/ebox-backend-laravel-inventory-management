@@ -37,7 +37,7 @@ class ProductController extends Controller
         $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
         $product->product_name = $request->product_name;
-        $product->product_quantity = $request->product_quantity;
+
         $product->product_code = $request->product_code;
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
@@ -45,7 +45,7 @@ class ProductController extends Controller
         $product->expire_date = $request->expire_date;
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
-        $product->total_import = $product->product_quantity * $product->import_price;
+
         $product->save();
         return response()->json([
             "message" => "Product added successfully!",
