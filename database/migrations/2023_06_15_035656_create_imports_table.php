@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('imports', function (Blueprint $table) {
             $table->id();
             $table->integer('import_quantity');
+            $table->integer('total_import_price')->default(0);
             $table->timestamps();
             $table->foreignId('product_id')
                 ->constrained()

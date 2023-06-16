@@ -14,12 +14,13 @@ class ImportController extends Controller
 
         $product = Products::findOrFail($id);
         $product->product_quantity = $product->product_quantity + $request->product_quantity;
-        $product->total_import = $product->product_quantity * $product->import_price;
+        $product->product_amount = $product->product_quantity * $product->import_price;
         $product->update();
 
         $import = new Import();
         $import->product_id = $id;
         $import->import_quantity = $request->product_quantity;
+        $import->total_import_price = $import->import_quantity * $product->import_price;
         $import->save();
 
         return response()->json([

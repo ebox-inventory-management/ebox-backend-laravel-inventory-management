@@ -19,7 +19,7 @@ class ExportController extends Controller
         $product = Products::findOrFail($id);
         if($product->product_quantity >0 ){
             $product->product_quantity = $product->product_quantity - $request->product_quantity;
-            $product->total_import = $product->product_quantity * $product->import_price;
+            $product->product_amount = $product->product_quantity * $product->import_price;
             $product->update();
 
             $export = new Export();

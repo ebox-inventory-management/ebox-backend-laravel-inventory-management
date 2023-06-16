@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Import;
 use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class ExpenseController extends Controller
 {
     public function getExpenses()
     {
-        $Expense = Products::sum('total_import');
+        $Expense = Import::sum('total_import_price');
         return response()->json([
             "Total Expense" =>$Expense,
             "status"=>200,
@@ -20,32 +21,25 @@ class ExpenseController extends Controller
     }
 
     public function getExpense($id_product){
-        $Expense = Products::where('id', $id_product)->sum('total_import');
+        $Expense = Import::where('id', $id_product)->sum('total_import_price');
         return response()->json([
             "Total Expense" =>$Expense,
             "status"=>200,
         ]);
     }
 
-    public function getExpenseByName($product_name){
-        $Expense = Products::where('product_name', $product_name)->sum('total_import');
-        return response()->json([
-            "Total Expense" =>$Expense,
-            "status"=>200,
-        ]);
-    }
 
     public function getTodayExpense()
     {
 
-        $todayExpense = Products::whereDate('created_at', today())->sum('total_import');
+        $todayExpense = Import::whereDate('created_at', today())->sum('total_import_price');
         return response()->json(['today_expense' => $todayExpense]);
     }
 
     public function getMonthExpense()
     {
         $now = Carbon::now();
-        $summonthExpense = Products::whereMonth('created_at', $now->month)->sum('total_import');
+        $summonthExpense = Import::whereMonth('created_at', $now->month)->sum('total_import_price');
         return response()->json([
             "total"=> $summonthExpense,
             'status' => 200
@@ -56,7 +50,7 @@ class ExpenseController extends Controller
     public function getYearExpense()
     {
         $now = Carbon::now();
-        $sumyearIncome = Products::whereYear('created_at', $now->year)->sum('total_import');
+        $sumyearIncome = Import::whereYear('created_at', $now->year)->sum('total_import_price');
         return response()->json([
 
             "total" => $sumyearIncome,
@@ -69,10 +63,10 @@ class ExpenseController extends Controller
         $formDate = date_format(date_create($formDate), "Y-m-d 0:0:0");
         $toDate = date_format(date_create($toDate), "Y-m-d 0:0:0");
 
-        $total_expense = Products::whereBetween('created_at', [$formDate, $toDate])
-            ->sum('total_import');
+        $total_expense = Import::whereBetween('created_at', [$formDate, $toDate])
+            ->sum('total_import_price');
 
-        $expenseInRange = Products::whereBetween('created_at', [$formDate, $toDate])
+        $expenseInRange = Import::whereBetween('created_at', [$formDate, $toDate])
             ->get();
 
         return response()->json([

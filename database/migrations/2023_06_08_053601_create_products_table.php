@@ -23,10 +23,11 @@ return new class extends Migration {
             $table->string("expire_date")->nullable();
             $table->integer("import_price")->nullable();
             $table->integer("export_price")->nullable();
-            $table->integer("total_import")->default(0);
+            $table->integer("product_amount")->default(0);
             $table->timestamps();
         });
     }
+    //total_import
 
     /**
      * Reverse the migrations.

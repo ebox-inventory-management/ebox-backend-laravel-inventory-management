@@ -121,7 +121,7 @@ class ProductController extends Controller
         $product->expire_date = $request->expire_date;
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
-        $product->total_import = $product->product_quantity * $product->import_price;
+        $product->product_amount = $product->product_quantity * $product->import_price;
         $product->update();
 
         return response()->json([

@@ -65,7 +65,6 @@ Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->na
 //Expense
 Route::get("expense",[ExpenseController::class,"getExpenses"])->name("expenses");
 Route::get("expense/view/{id_product}",[ExpenseController::class,"getExpense"])->name("viewProductExpenseByID");
-Route::get("expense/name/{product_name}",[ExpenseController::class,"getExpenseByName"])->name("viewProductExpenseByName");
 Route::get("expense/{formDate}/{toDate}",[ExpenseController::class,"getExpenseInRange"])->name("expenseInRange");
 Route::get("expense/today",[ExpenseController::class,"getTodayExpense"])->name("todayExpense");
 Route::get("expense/month",[ExpenseController::class,"getMonthExpense"])->name("monthlyExpense");

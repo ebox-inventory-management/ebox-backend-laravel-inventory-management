@@ -24,7 +24,8 @@ class IncomeController extends Controller
 
     public function getIncomes()
     {
-        $income = Income::all();
+        $income = Income::sum('income_amount');
+
         return response()->json([
             "Income" => $income,
             'status' => 200

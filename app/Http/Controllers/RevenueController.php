@@ -13,7 +13,7 @@ class RevenueController extends Controller
     {
         $Expense = Revenue::sum('revenue');
         return response()->json([
-            "Total Expense" =>$Expense,
+            "Total Revenue" =>$Expense,
             "status"=>200,
         ]);
     }
