@@ -17,7 +17,7 @@ class ExportController extends Controller
     {
 
         $product = Products::findOrFail($id);
-        if($product->product_quantity >0 ){
+        if($product->product_quantity > 0 && $product->product_quantity > $request->product_quantity ){
             $product->product_quantity = $product->product_quantity - $request->product_quantity;
             $product->product_amount = $product->product_quantity * $product->import_price;
             $product->update();
@@ -42,7 +42,7 @@ class ExportController extends Controller
             ]);
         }else{
             return response()->json([
-                "message" => "Cannot export product with zero quantity",
+                "message" => "Cannot export product",
                 "status" => 400,
             ]);
         }
