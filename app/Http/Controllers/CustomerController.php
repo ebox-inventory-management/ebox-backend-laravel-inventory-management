@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\Category;
 use App\Models\Customer;
 use Faker\Provider\Image;
 use Illuminate\Http\Request;
@@ -96,4 +97,21 @@ class CustomerController extends Controller
         ]);
 
     }
+
+
+    public function getByName($Customer)
+    {
+        $customer = Customer::where('name', '=',  $Customer)->first();
+
+        if ($customer) {
+            return response()->json( [
+                "category" =>$customer,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Customer not found'], 404);
+        }
+    }
+
+
+
 }

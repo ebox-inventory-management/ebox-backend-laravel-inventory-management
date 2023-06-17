@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Faker\Provider\Image;
@@ -92,5 +93,18 @@ class SupplierController extends Controller
             "status"=>200,
         ]);
 
+    }
+
+    public function getByName($Supplier)
+    {
+        $supplier = Supplier::where('name', '=',  $Supplier)->first();
+
+        if ($supplier) {
+            return response()->json( [
+                "category" =>$supplier,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Supplier not found'], 404);
+        }
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateBrandRequest;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -74,5 +75,17 @@ class BrandController extends Controller
 
     }
 
+    public function getByName($Brand)
+    {
+        $brand = Brand::where('name', '=',  $Brand)->first();
+
+        if ($brand) {
+            return response()->json( [
+                "brand" =>$brand,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Brand not found'], 404);
+        }
+    }
 
 }
