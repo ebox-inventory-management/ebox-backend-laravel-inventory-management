@@ -66,20 +66,23 @@ class ProductController extends Controller
     }
 
 
-    public function getProduct($id){
+    public function getProduct($id)
+    {
         $product = Products::findOrFail($id);
         return response()->json([
-            "product" =>$product,"status"=>200,
+            "product" => $product,
+            "status" => 200,
         ]);
     }
 
     public function getByName($product_name)
     {
-        $product = Products::where('product_name', '=',  $product_name)->first();
+        $product = Products::where('product_name', '=', $product_name)->first();
 
         if ($product) {
-            return response()->json( [
-                "product" =>$product,"status"=>200,
+            return response()->json([
+                "product" => $product,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'Product not found'], 404);
@@ -93,8 +96,9 @@ class ProductController extends Controller
         $products = Products::where('product_name', 'like', '%' . $product_name . '%')->get();
 
         if ($products) {
-            return response()->json( [
-                "product" =>$products,"status"=>200,
+            return response()->json([
+                "products" => $products,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'Product not found'], 404);
