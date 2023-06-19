@@ -78,11 +78,12 @@ class BrandController extends Controller
 
     public function getByName($Brand)
     {
-        $brand = Brand::where('name', '=',  $Brand)->first();
+        $brand = Brand::where('name', '=', $Brand)->first();
 
         if ($brand) {
-            return response()->json( [
-                "brand" =>$brand,"status"=>200,
+            return response()->json([
+                "brands" => $brand,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'Brand not found'], 404);
@@ -95,8 +96,9 @@ class BrandController extends Controller
         $brand = Brand::where('name', 'like', '%' . $brand_name . '%')->get();
 
         if ($brand) {
-            return response()->json( [
-                "brand" =>$brand,"status"=>200,
+            return response()->json([
+                "brand" => $brand,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'brand not found'], 404);

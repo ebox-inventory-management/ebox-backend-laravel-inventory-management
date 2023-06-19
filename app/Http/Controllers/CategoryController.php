@@ -81,11 +81,12 @@ class CategoryController extends Controller
 
     public function getByName($Category)
     {
-        $category = Category::where('name', '=',  $Category)->first();
+        $category = Category::where('name', '=', $Category)->first();
 
         if ($category) {
-            return response()->json( [
-                "category" =>$category,"status"=>200,
+            return response()->json([
+                "categories" => $category,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'Category not found'], 404);
@@ -98,8 +99,9 @@ class CategoryController extends Controller
         $category = Category::where('name', 'like', '%' . $category_name . '%')->get();
 
         if ($category) {
-            return response()->json( [
-                "category" =>$category,"status"=>200,
+            return response()->json([
+                "category" => $category,
+                "status" => 200,
             ]);
         } else {
             return response()->json(['error' => 'category not found'], 404);
