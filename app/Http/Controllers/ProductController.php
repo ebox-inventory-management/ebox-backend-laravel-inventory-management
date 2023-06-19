@@ -85,6 +85,22 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
     }
+
+    public function getByChar($product_name)
+    {
+
+
+        $products = Products::where('product_name', 'like', '%' . $product_name . '%')->get();
+
+        if ($products) {
+            return response()->json( [
+                "product" =>$products,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    }
+
 //    public function getProduct($id)
 //    {
 //        $product = Products::table('products')

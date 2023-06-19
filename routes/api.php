@@ -63,6 +63,7 @@ Route::get("products",[ProductController::class,"getProducts"])->name("products"
 Route::post("product/update/{id}",[ProductController::class,"updateProduct"])->name("editProduct");
 Route::get("product/view/{id}",[ProductController::class,"getProduct"])->name("viewProduct");
 Route::get("product/name/{product_name}",[ProductController::class,"getByName"])->name("viewProductName");
+Route::get("product/search/{product_name}",[ProductController::class,"getByChar"])->name("searchProductName");
 Route::get("product/delete/{id}",[ProductController::class,"deleteProduct"])->name("deleteProduct");
 
 //Expense
