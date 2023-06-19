@@ -101,21 +101,6 @@ class ProductController extends Controller
         }
     }
 
-//    public function getProduct($id)
-//    {
-//        $product = Products::table('products')
-//            ->join('categories', 'categories.id', '=', 'products.category_id')
-//            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
-//            ->join('brands', 'brands.id', '=', 'products.brand_id')
-//            ->select('products.*', 'brands.name as brand_name', 'suppliers.name as sup_name', 'suppliers.id as supplier_id', 'categories.category_name', 'categories.id as category_id')
-//            ->where('products.id', '=', $id)
-//            ->first();
-//        return response()->json([
-//            "product" => $product,
-//            "status" => 200,
-//        ]);
-//    }
-
     public function updateProduct(Request $request)
     {
 

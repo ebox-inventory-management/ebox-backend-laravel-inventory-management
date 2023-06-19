@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -107,4 +108,18 @@ class SupplierController extends Controller
             return response()->json(['error' => 'Supplier not found'], 404);
         }
     }
+    public function getByChar($supplier_name)
+    {
+
+        $supplier = Supplier::where('name', 'like', '%' . $supplier_name . '%')->get();
+
+        if ($supplier) {
+            return response()->json( [
+                "supplier" =>$supplier,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'supplier not found'], 404);
+        }
+    }
+
 }

@@ -32,6 +32,7 @@ Route::get("customer/view/{id}",[CustomerController::class,"getCustomer"])->name
 Route::post("customer/update/{id}",[CustomerController::class,"updatedCustomer"])->name("update-customer");
 Route::get("customer/delete/{id}",[CustomerController::class,"deleteCustomer"])->name("delete-customer");
 Route::get("customer/{name}",[CustomerController::class,"getByName"])->name("customerName");
+Route::get("customer/search/{name}",[CustomerController::class,"getByChar"])->name("searchCustomerName");
 
 //Supplier
 Route::post("supplier/add",[SupplierController::class,"saveSupplier"])->name("add-supplier");
@@ -40,6 +41,7 @@ Route::get("supplier/view/{id}",[SupplierController::class,"getSupplier"])->name
 Route::post("supplier/update/{id}",[SupplierController::class,"updateSupplier"])->name("update-supplier");
 Route::get("supplier/delete/{id}",[SupplierController::class,"deleteSupplier"])->name("delete-supplier");
 Route::get("supplier/{name}",[SupplierController::class,"getByName"])->name("supplierName");
+Route::get("supplier/search/{name}",[SupplierController::class,"getByChar"])->name("searchSupplierName");
 
 //Category
 Route::post("category/add",[CategoryController::class,"saveCategory"])->name("addCategory");
@@ -48,6 +50,7 @@ Route::get("category/view/{id}",[CategoryController::class,"getCategory"])->name
 Route::post("category/update/{id}",[CategoryController::class,"updateCategory"])->name("updateCategory");
 Route::get("category/delete/{id}",[CategoryController::class,"deleteCategory"])->name("deleteCategory");
 Route::get("category/{name}",[CategoryController::class,"getByName"])->name("categoryName");
+Route::get("category/search/{category_name}",[CategoryController::class,"getByChar"])->name("searchCategoryName");
 
 //Brand
 Route::post("brand/add",[BrandController::class,"saveBrand"])->name("addBrand");
@@ -56,6 +59,7 @@ Route::post("brand/update/{id}",[BrandController::class,"updateBrand"])->name("u
 Route::get("brand/view/{id}",[BrandController::class,"getBrand"])->name("viewBrand");
 Route::get("brand/delete/{id}",[BrandController::class,"deleteBrand"])->name("deleteBrands");
 Route::get("brand/{name}",[BrandController::class,"getByName"])->name("brandName");
+Route::get("brand/search/{name}",[BrandController::class,"getByChar"])->name("searchBrandName");
 
 //Product
 Route::post("product/add",[ProductController::class,"saveProduct"])->name("addProduct");

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateBrandRequest;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +86,20 @@ class BrandController extends Controller
             ]);
         } else {
             return response()->json(['error' => 'Brand not found'], 404);
+        }
+    }
+
+    public function getByChar($brand_name)
+    {
+
+        $brand = Brand::where('name', 'like', '%' . $brand_name . '%')->get();
+
+        if ($brand) {
+            return response()->json( [
+                "brand" =>$brand,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'brand not found'], 404);
         }
     }
 

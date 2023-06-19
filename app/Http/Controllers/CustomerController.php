@@ -113,5 +113,18 @@ class CustomerController extends Controller
     }
 
 
+    public function getByChar($customer_name)
+    {
+
+        $customer = Customer::where('name', 'like', '%' . $customer_name . '%')->get();
+
+        if ($customer) {
+            return response()->json( [
+                "customer" =>$customer,"status"=>200,
+            ]);
+        } else {
+            return response()->json(['error' => 'customer not found'], 404);
+        }
+    }
 
 }
