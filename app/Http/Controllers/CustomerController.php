@@ -111,7 +111,7 @@ class CustomerController extends Controller
 
         if ($customer) {
             return response()->json([
-                "customers" => $customer,
+                "customer" => $customer,
                 "status" => 200,
             ]);
         } else {
@@ -127,7 +127,7 @@ class CustomerController extends Controller
 
         if ($customer) {
             return response()->json([
-                "customer" => $customer,
+                "customers" => $customer,
                 "status" => 200,
             ]);
         } else {
