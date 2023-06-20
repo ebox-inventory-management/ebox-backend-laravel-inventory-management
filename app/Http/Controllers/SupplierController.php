@@ -110,7 +110,7 @@ class SupplierController extends Controller
 
         if ($supplier) {
             return response()->json([
-                "suppliers" => $supplier,
+                "supplier" => $supplier,
                 "status" => 200,
             ]);
         } else {
@@ -124,7 +124,7 @@ class SupplierController extends Controller
 
         if ($supplier) {
             return response()->json([
-                "supplier" => $supplier,
+                "suppliers" => $supplier,
                 "status" => 200,
             ]);
         } else {

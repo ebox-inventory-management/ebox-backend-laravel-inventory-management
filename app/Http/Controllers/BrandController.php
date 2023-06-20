@@ -82,7 +82,7 @@ class BrandController extends Controller
 
         if ($brand) {
             return response()->json([
-                "brands" => $brand,
+                "brand" => $brand,
                 "status" => 200,
             ]);
         } else {
@@ -97,7 +97,7 @@ class BrandController extends Controller
 
         if ($brand) {
             return response()->json([
-                "brand" => $brand,
+                "brands" => $brand,
                 "status" => 200,
             ]);
         } else {

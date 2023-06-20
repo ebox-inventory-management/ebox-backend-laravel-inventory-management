@@ -85,7 +85,7 @@ class CategoryController extends Controller
 
         if ($category) {
             return response()->json([
-                "categories" => $category,
+                "category" => $category,
                 "status" => 200,
             ]);
         } else {
@@ -100,7 +100,7 @@ class CategoryController extends Controller
 
         if ($category) {
             return response()->json([
-                "category" => $category,
+                "categories" => $category,
                 "status" => 200,
             ]);
         } else {
