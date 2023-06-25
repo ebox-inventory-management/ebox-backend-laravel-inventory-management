@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 
 class ExportController extends Controller
 {
-    public function saveExport(Request $request,$id)
+    public function saveExport(Request $request, $id)
     {
 
         $product = Products::findOrFail($id);
-        if($product->product_quantity > 0 && $product->product_quantity > $request->product_quantity ){
+        if ($product->product_quantity >= 0 && $product->product_quantity > $request->product_quantity) {
             $product->product_quantity = $product->product_quantity - $request->product_quantity;
             $product->product_amount = $product->product_quantity * $product->import_price;
             $product->update();
@@ -33,14 +33,14 @@ class ExportController extends Controller
             $income->save();
 
             $revenue = new Revenue();
-            $revenue->revenue = ($product->export_price * $export->export_quantity) - ( $product->import_price * $export->export_quantity );
+            $revenue->revenue = ($product->export_price * $export->export_quantity) - ($product->import_price * $export->export_quantity);
             $revenue->save();
 
             return response()->json([
                 "message" => "Export added successfully!",
                 "status" => 200,
             ]);
-        }else{
+        } else {
             return response()->json([
                 "message" => "Cannot export product",
                 "status" => 400,
