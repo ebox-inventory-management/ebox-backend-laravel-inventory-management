@@ -26,12 +26,15 @@ class CustomerController extends Controller
 
     public function saveCustomer(Request $request)
     {
-
-        $imageUrl = '';
-        if ($request->hasFile('photo')) {
-            $imageUrl = $this->uploadCustomerImage($request);
-        }
         $customer = new Customer();
+
+        // upload image to storage
+        if ($request->hasFile('photo')) {
+            $image = $request->file('photo');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $image_name);
+            $customer->photo = $image_name;
+        }
         $customer->name = $request->name;
         $customer->email = $request->email;
         $customer->phone = $request->phone;
@@ -40,7 +43,6 @@ class CustomerController extends Controller
         $customer->shop_name = $request->shop_name;
         $customer->bank_name = $request->bank_name;
         $customer->bank_number = $request->bank_number;
-        $customer->photo = $imageUrl;
         $customer->save();
         return response()->json([
             "message" => "Customer added successfully!",
@@ -69,19 +71,30 @@ class CustomerController extends Controller
 
 
         $customer = Customer::findOrFail($id);
+        $data = $request->all();
+
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['phone'] = $request->phone;
+        $data['address'] = $request->address;
+        $data['city'] = $request->city;
+        $data['shop_name'] = $request->shop_name;
+        $data['bank_name'] = $request->bank_name;
+        $data['bank_number'] = $request->bank_number;
+
+
         if ($request->hasFile('photo')) {
-            unlink($customer->photo);
-            $customer->photo = $this->uploadCustomerImage($request);
+            $image = $request->file('photo');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $image_name);
+            $data['photo'] = $image_name;
+            // remove old image
+            $old_image = public_path('images/' . $customer->photo);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
         }
-        $customer->name = $request->name;
-        $customer->email = $request->email;
-        $customer->phone = $request->phone;
-        $customer->address = $request->address;
-        $customer->city = $request->city;
-        $customer->shop_name = $request->shop_name;
-        $customer->bank_name = $request->bank_name;
-        $customer->bank_number = $request->bank_number;
-        $customer->save();
+        $customer->update($data);
         return response()->json([
             "message" => "Customer data updated successfully!",
             "status" => 200,

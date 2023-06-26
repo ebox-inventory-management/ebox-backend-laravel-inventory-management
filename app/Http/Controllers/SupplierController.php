@@ -26,12 +26,15 @@ class SupplierController extends Controller
 
     public function saveSupplier(Request $request)
     {
-
-        $imageUrl = '';
-        if ($request->hasFile('photo')) {
-            $imageUrl = $this->uploadSupplierImage($request);
-        }
         $supplier = new Supplier();
+
+        // upload image to storage
+        if ($request->hasFile('photo')) {
+            $image = $request->file('photo');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $image_name);
+            $supplier->photo = $image_name;
+        }
         $supplier->name = $request->name;
         $supplier->email = $request->email;
         $supplier->phone = $request->phone;
@@ -41,7 +44,6 @@ class SupplierController extends Controller
         $supplier->shop_name = $request->shop_name;
         $supplier->bank_name = $request->bank_name;
         $supplier->bank_number = $request->bank_number;
-        $supplier->photo = $imageUrl;
         $supplier->save();
         return response()->json([
             "message" => "Supplier added successfully!",
@@ -69,21 +71,31 @@ class SupplierController extends Controller
     public function updateSupplier(Request $request, $id)
     {
         $supplier = Supplier::findOrFail($id);
+        $data = $request->all();
+
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['phone'] = $request->phone;
+        $data['address'] = $request->address;
+        $data['city'] = $request->city;
+        $data['type'] = $request->type;
+        $data['shop_name'] = $request->shop_name;
+        $data['bank_name'] = $request->bank_name;
+        $data['bank_number'] = $request->bank_number;
+
+
         if ($request->hasFile('photo')) {
-            if ($supplier->photo)
-                unlink($supplier->photo);
-            $supplier->photo = $this->uploadCustomerImage($request);
+            $image = $request->file('photo');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $image_name);
+            $data['photo'] = $image_name;
+            // remove old image
+            $old_image = public_path('images/' . $supplier->photo);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
         }
-        $supplier->name = $request->name;
-        $supplier->email = $request->email;
-        $supplier->phone = $request->phone;
-        $supplier->address = $request->address;
-        $supplier->city = $request->city;
-        $supplier->type = $request->type;
-        $supplier->shop_name = $request->shop_name;
-        $supplier->bank_name = $request->bank_name;
-        $supplier->bank_number = $request->bank_number;
-        $supplier->save();
+        $supplier->update($data);
         return response()->json([
             "message" => "Supplier data updated successfully!",
             "status" => 200,
