@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Products;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -37,7 +39,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         return response()->json([
-            "supplier" => $category,
+            "category" => $category,
             "status" => 200,
         ]);
     }
@@ -75,5 +77,34 @@ class CategoryController extends Controller
             "status" => 200
         ]);
 
+    }
+
+    public function getByName($Category)
+    {
+        $category = Category::where('name', '=', $Category)->first();
+
+        if ($category) {
+            return response()->json([
+                "category" => $category,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+    }
+
+    public function getByChar($category_name)
+    {
+
+        $category = Category::where('name', 'like', '%' . $category_name . '%')->get();
+
+        if ($category) {
+            return response()->json([
+                "categories" => $category,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'category not found'], 404);
+        }
     }
 }
