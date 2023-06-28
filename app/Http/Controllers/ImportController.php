@@ -33,8 +33,8 @@ class ImportController extends Controller
         } else {
             return response()->json([
                 "message" => "Can't Reduce Product!",
-                "status" => 200,
-            ]);
+                "status" => 404,
+            ], 404);
         }
 
     }
