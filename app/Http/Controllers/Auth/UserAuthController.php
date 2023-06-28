@@ -29,8 +29,16 @@ class UserAuthController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
+            $image->move(public_path('images/users/'), $image_name);
             $data['image'] = $image_name;
+        } else if ($request->image) {
+            $base64_string = $request->image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/users/' . $file_name);
+            file_put_contents($file_path, $image);
+            $data['image'] = $file_name;
         }
 
 
@@ -64,14 +72,27 @@ class UserAuthController extends Controller
     {
         $user = User::find($id);
         $data = $request->all();
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
+            $image->move(public_path('images/users/'), $image_name);
             $data['image'] = $image_name;
-
             // remove old image
-            $old_image = public_path('images/' . $user->image);
+            $old_image = public_path('images/users/' . $user->image);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
+        } else if ($request->image) {
+            $base64_string = $request->image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/users/' . $file_name);
+            file_put_contents($file_path, $image);
+            $data['image'] = $file_name;
+            // remove old image
+            $old_image = public_path('images/users/' . $user->image);
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }
