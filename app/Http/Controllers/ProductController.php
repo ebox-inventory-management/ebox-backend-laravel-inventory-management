@@ -27,7 +27,6 @@ class ProductController extends Controller
 
     }
 
-
     public function saveProduct(Request $request)
     {
         $product = new Products();
@@ -36,8 +35,16 @@ class ProductController extends Controller
         if ($request->hasFile('product_image')) {
             $image = $request->file('product_image');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
+            $image->move(public_path('images/products/'), $image_name);
             $product->product_image = $image_name;
+        } else if ($request->product_image) {
+            $base64_string = $request->product_image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/products/' . $file_name);
+            file_put_contents($file_path, $image);
+            $product->product_image = $file_name;
         }
 
         $product->category_id = $request->category_id;
@@ -129,15 +136,25 @@ class ProductController extends Controller
         if ($request->hasFile('product_image')) {
             $image = $request->file('product_image');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
-            $data['product_image'] = $image_name;
-            // remove old image
-            $old_image = public_path('images/' . $product->product_image);
+            $image->move(public_path('images/products/'), $image_name);
+            $data['product_image'] = $image_name; // remove old image
+            $old_image = public_path('images/products/' . $product->product_image);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
+        } else if ($request->product_image) {
+            $base64_string = $request->product_image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/products/' . $file_name);
+            file_put_contents($file_path, $image);
+            $data['product_image'] = $file_name; // remove old image
+            $old_image = public_path('images/products/' . $product->product_image);
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }
         }
-
 
         $product->update($data);
 

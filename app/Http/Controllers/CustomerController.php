@@ -32,8 +32,16 @@ class CustomerController extends Controller
         if ($request->hasFile('photo')) {
             $image = $request->file('photo');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
+            $image->move(public_path('images/customers/'), $image_name);
             $customer->photo = $image_name;
+        } else if ($request->photo) {
+            $base64_string = $request->photo;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/customers/' . $file_name);
+            file_put_contents($file_path, $image);
+            $customer->photo = $file_name;
         }
         $customer->name = $request->name;
         $customer->email = $request->email;
@@ -86,10 +94,21 @@ class CustomerController extends Controller
         if ($request->hasFile('photo')) {
             $image = $request->file('photo');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
-            $data['photo'] = $image_name;
-            // remove old image
-            $old_image = public_path('images/' . $customer->photo);
+            $image->move(public_path('images/customers/'), $image_name);
+            $data['photo'] = $image_name; // remove old image
+            $old_image = public_path('images/customers/' . $customer->photo);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
+        } else if ($request->photo) {
+            $base64_string = $request->photo;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/customers/' . $file_name);
+            file_put_contents($file_path, $image);
+            $data['photo'] = $file_name; // remove old image
+            $old_image = public_path('images/customers/' . $customer->photo);
             if (file_exists($old_image)) {
                 @unlink($old_image);
             }

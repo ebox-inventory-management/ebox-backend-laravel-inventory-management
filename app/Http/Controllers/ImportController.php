@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ImportController extends Controller
 {
-    public function saveImport(Request $request,$id)
+    public function saveImport(Request $request, $id)
     {
 
         $product = Products::findOrFail($id);
@@ -17,6 +17,7 @@ class ImportController extends Controller
 
         $import = new Import();
         $import->product_id = $id;
+
         if($product->product_quantity +  $request->product_quantity > 0 ){
             $product->product_quantity = $product->product_quantity + $request->product_quantity;
             $product->product_amount = $product->product_quantity * $product->import_price;
@@ -34,8 +35,6 @@ class ImportController extends Controller
                 "status" => 200,
             ]);
         }
-
-
 
     }
 

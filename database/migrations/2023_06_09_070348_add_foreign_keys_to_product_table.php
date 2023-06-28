@@ -39,6 +39,7 @@ return new class extends Migration {
             $table->dropConstrainedForeignId('category_id');
             $table->dropConstrainedForeignId('supplier_id');
             $table->dropConstrainedForeignId('brand_id');
+            $table->dropConstrainedForeignId('product_id');
 
         });
     }
