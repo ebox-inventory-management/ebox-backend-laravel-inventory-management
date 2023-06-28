@@ -17,7 +17,7 @@ class ExportController extends Controller
     {
 
         $product = Products::findOrFail($id);
-        if ($product->product_quantity >= 0 && $product->product_quantity > $request->product_quantity) {
+        if ($product->product_quantity >= 0 && $product->product_quantity >= $request->product_quantity) {
             $product->product_quantity = $product->product_quantity - $request->product_quantity;
             $product->product_amount = $product->product_quantity * $product->import_price;
             $product->update();
@@ -58,6 +58,14 @@ class ExportController extends Controller
 
         return response()->json([
             "exports" => $exports,
+            "status" => 200,
+        ]);
+    }
+
+    public function getExportByProductID($id){
+        $export = Export::where('product_id',  $id )->get();
+        return response()->json([
+            "exports" => $export,
             "status" => 200,
         ]);
     }

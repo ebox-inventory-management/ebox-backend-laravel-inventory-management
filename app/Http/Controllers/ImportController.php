@@ -13,20 +13,29 @@ class ImportController extends Controller
     {
 
         $product = Products::findOrFail($id);
-        $product->product_quantity = $product->product_quantity + $request->product_quantity;
-        $product->product_amount = $product->product_quantity * $product->import_price;
-        $product->update();
+
 
         $import = new Import();
         $import->product_id = $id;
-        $import->import_quantity = $request->product_quantity;
-        $import->total_import_price = $import->import_quantity * $product->import_price;
-        $import->save();
+        if($product->product_quantity +  $request->product_quantity > 0 ){
+            $product->product_quantity = $product->product_quantity + $request->product_quantity;
+            $product->product_amount = $product->product_quantity * $product->import_price;
+            $product->update();
+            $import->import_quantity = $request->product_quantity;
+            $import->total_import_price = $import->import_quantity * $product->import_price;
+            $import->save();
+            return response()->json([
+                "message" => "Import added successfully!",
+                "status" => 200,
+            ]);
+        }else{
+            return response()->json([
+                "message" => "Can't Reduce Product!",
+                "status" => 200,
+            ]);
+        }
 
-        return response()->json([
-            "message" => "Import added successfully!",
-            "status" => 200,
-        ]);
+
 
     }
 
@@ -40,5 +49,13 @@ class ImportController extends Controller
         ]);
     }
 
+    public function getImportByProductID($id){
+
+        $import = Import::where('product_id',  $id )->get();
+        return response()->json([
+            "imports" => $import,
+            "status" => 200,
+        ]);
+    }
 
 }

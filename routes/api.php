@@ -90,10 +90,12 @@ Route::get("income/year", [IncomeController::class, "getYearIncome"])->name("yea
 //Import
 Route::post("import/add/{id}", [ImportController::class, "saveImport"])->name("addImport");
 Route::get("imports", [ImportController::class, "getImports"])->name("Imports");
+Route::get("import/{id}", [ImportController::class, "getImportByProductID"])->name("getImportByProductID");
 
 //Export
 Route::post("export/add/{id}", [ExportController::class, "saveExport"])->name("addExport");
 Route::get("exports", [ExportController::class, "getExports"])->name("Exports");
+Route::get("export/{id}", [ExportController::class, "getExportByProductID"])->name("getExportByProductID");
 
 //Revenue
 Route::get("revenues", [RevenueController::class, "getRevenues"])->name("Revenues");
