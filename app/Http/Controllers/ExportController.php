@@ -24,6 +24,8 @@ class ExportController extends Controller
 
             $export = new Export();
             $export->product_id = $id;
+            $export->product_name = $product->product_name;
+
             $export->export_quantity = $request->product_quantity;
             $export->total_export_price = $product->export_price * $export->export_quantity;
             $export->save();

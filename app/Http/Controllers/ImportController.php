@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ImportController extends Controller
 {
-    public function saveImport(Request $request,$id)
+    public function saveImport(Request $request, $id)
     {
 
         $product = Products::findOrFail($id);
@@ -19,6 +19,7 @@ class ImportController extends Controller
 
         $import = new Import();
         $import->product_id = $id;
+        $import->product_name = $product->product_name;
         $import->import_quantity = $request->product_quantity;
         $import->total_import_price = $import->import_quantity * $product->import_price;
         $import->save();
