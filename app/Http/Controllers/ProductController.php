@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Customer;
+use App\Models\Export;
+use App\Models\Import;
+use App\Models\Income;
 use App\Models\Products;
 
 use Illuminate\Http\Request;
@@ -23,12 +27,26 @@ class ProductController extends Controller
 
     }
 
-
     public function saveProduct(Request $request)
     {
-
-        $imageUrl = $this->uploadProductImage($request);
         $product = new Products();
+
+        // upload image to storage
+        if ($request->hasFile('product_image')) {
+            $image = $request->file('product_image');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/products/'), $image_name);
+            $product->product_image = $image_name;
+        } else if ($request->product_image) {
+            $base64_string = $request->product_image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/products/' . $file_name);
+            file_put_contents($file_path, $image);
+            $product->product_image = $file_name;
+        }
+
         $product->category_id = $request->category_id;
         $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
@@ -36,13 +54,9 @@ class ProductController extends Controller
         $product->product_code = $request->product_code;
         $product->product_garage = $request->product_garage;
         $product->product_route = $request->product_route;
-        $product->product_image = $request->product_image;
-        $product->buy_date = $request->buy_date;
         $product->expire_date = $request->expire_date;
-        $product->buying_price = $request->buying_price;
-        $product->price = $request->price;
-
-
+        $product->import_price = $request->import_price;
+        $product->export_price = $request->export_price;
 
         $product->save();
         return response()->json([
@@ -55,49 +69,95 @@ class ProductController extends Controller
     public function getProducts()
     {
         $products = Products::all();
+
         return response()->json([
             "products" => $products,
+
             "status" => 200,
         ]);
     }
 
+
     public function getProduct($id)
     {
-        $product = Products::table('products')
-            ->join('categories', 'categories.id', '=', 'products.category_id')
-            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
-            ->join('brands', 'brands.id', '=', 'products.brand_id')
-            ->select('products.*', 'brands.name as brand_name', 'suppliers.name as sup_name', 'suppliers.id as supplier_id', 'categories.category_name', 'categories.id as category_id')
-            ->where('products.id', '=', $id)
-            ->first();
+        $product = Products::findOrFail($id);
         return response()->json([
             "product" => $product,
             "status" => 200,
         ]);
     }
 
-    public function updateProduct(UpdateProductRequest $request)
+    public function getByName($product_name)
+    {
+        $product = Products::where('product_name', '=', $product_name)->first();
+
+        if ($product) {
+            return response()->json([
+                "product" => $product,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    }
+
+    public function getByChar($product_name)
     {
 
-        $imageUrl = '';
 
-        $product = Products::findOrFail($request->id);
-        if ($request->hasFile('product_image')) {
-            $imageUrl = $this->uploadProductImage($request);
-            $product->product_image = $imageUrl;
+        $products = Products::where('product_name', 'like', '%' . $product_name . '%')->get();
+
+        if ($products) {
+            return response()->json([
+                "products" => $products,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'Product not found'], 404);
         }
-        $product->category_id = $request->category_id;
-        $product->supplier_id = $request->supplier_id;
-        $product->brand_id = $request->brand_id;
-        $product->product_name = $request->product_name;
-        $product->product_code = $request->product_code;
-        $product->product_garage = $request->product_garage;
-        $product->product_route = $request->product_route;
-        $product->buy_date = $request->buy_date;
-        $product->expire_date = $request->expire_date;
-        $product->buying_price = $request->buying_price;
-        $product->price = $request->price;
-        $product->update();
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        $product = Products::findOrFail($id);
+        $data = $request->all();
+
+        $data['category_id'] = $request->category_id;
+        $data['supplier_id'] = $request->supplier_id;
+        $data['brand_id'] = $request->brand_id;
+        $data['product_name'] = $request->product_name;
+        $data['product_code'] = $request->product_code;
+        $data['product_garage'] = $request->product_garage;
+        $data['product_route'] = $request->product_route;
+        $data['expire_date'] = $request->expire_date;
+        $data['import_price'] = $request->import_price;
+        $data['export_price'] = $request->export_price;
+
+        if ($request->hasFile('product_image')) {
+            $image = $request->file('product_image');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/products/'), $image_name);
+            $data['product_image'] = $image_name; // remove old image
+            $old_image = public_path('images/products/' . $product->product_image);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
+        } else if ($request->product_image) {
+            $base64_string = $request->product_image;
+            $image = base64_decode($base64_string);
+
+            $file_name = time() . '.' . 'png';
+            $file_path = public_path('images/products/' . $file_name);
+            file_put_contents($file_path, $image);
+            $data['product_image'] = $file_name; // remove old image
+            $old_image = public_path('images/products/' . $product->product_image);
+            if (file_exists($old_image)) {
+                @unlink($old_image);
+            }
+        }
+
+        $product->update($data);
+
 
         return response()->json([
             "message" => "Product data updated successfully!",
@@ -136,6 +196,16 @@ class ProductController extends Controller
     }
 
     public function getProductByCategoryAndSupplier($category_id, $supplier_id)
+    {
+        $products = Products::where('category_id', '=', $category_id)->where('supplier_id', '=', $supplier_id)->get();
+        return response()->json([
+            "products" => $products,
+            "status" => 200,
+        ]);
+    }
+
+
+    public function getProductQuatity($category_id, $supplier_id)
     {
         $products = Products::where('category_id', '=', $category_id)->where('supplier_id', '=', $supplier_id)->get();
         return response()->json([
