@@ -45,8 +45,8 @@ class ExportController extends Controller
         } else {
             return response()->json([
                 "message" => "Cannot export product",
-                "status" => 400,
-            ]);
+                "status" => 404,
+            ], 404);
         }
 
 
@@ -64,8 +64,9 @@ class ExportController extends Controller
         ]);
     }
 
-    public function getExportByProductID($id){
-        $export = Export::where('product_id',  $id )->get();
+    public function getExportByProductID($id)
+    {
+        $export = Export::where('product_id', $id)->get();
         return response()->json([
             "exports" => $export,
             "status" => 200,

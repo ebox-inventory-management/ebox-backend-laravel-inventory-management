@@ -1,18 +1,42 @@
-FROM debian:latest
-RUN apt update
-RUN apt install php -y
-RUN apt install -y php8.2-fpm php8.2-ctype php8.2-curl php8.2-dom php8.2-Fileinfo
-RUN apt install -y filter php8.2-Mbstring php8.2-pdo php8.2-Tokenizer php8.2-XML php8.2-mysql
-RUN apt install -y nginx
+FROM php:8.1-fpm
 
-COPY . /app
-WORKDIR /app
-RUN chown -R www-data:www-data /app
-RUN chmod -R 775 /app
+# set your user name, ex: user=bernardo
+ARG user=carlos
+ARG uid=1000
 
-RUN cp /app/localhost.conf /etc/nginx/sites-available
-RUN ln -s /etc/nginx/sites-available/localhost.conf /etc/nginx/sites-enabled
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-CMD service php8.2-fpm start && service nginx start && tail -F /var/log/nginx/access.log
-#CMD service php8.2-fpm start && nginx -g 'daemon off;'
-EXPOSE 80
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
+
+# Install redis
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy custom configurations PHP
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
+USER $user

@@ -14,13 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->integer('export_quantity');
             $table->integer('total_export_price')->default(0);
-            $table->timestamps();
             $table->foreignId('product_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->string('product_name');
-
+            $table->timestamps();
         });
     }
 

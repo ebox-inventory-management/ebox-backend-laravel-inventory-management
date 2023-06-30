@@ -7,42 +7,46 @@ use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Supplier;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Faker\Provider\Image;
 
 class SupplierController extends Controller
 {
-    protected function uploadSupplierImage($request)
-    {
-        $supplierImage = $request->file('photo');
-        $imageType = $supplierImage->getClientOriginalExtension();
-        $imageName = rand(100, 100000) . $request->name . '.' . $imageType;
-        $directory = 'inventory/supplier-images/';
-        $imageUrl = $directory . $imageName;
-        Image::make($supplierImage)->save($imageUrl);
-        return $imageUrl;
-
-    }
+//    protected function uploadSupplierImage($request)
+//    {
+//        $supplierImage = $request->file('photo');
+//        $imageType = $supplierImage->getClientOriginalExtension();
+//        $imageName = rand(100, 100000) . $request->name . '.' . $imageType;
+//        $directory = 'inventory/supplier-images/';
+//        $imageUrl = $directory . $imageName;
+//        Image::make($supplierImage)->save($imageUrl);
+//        return $imageUrl;
+//
+//    }
 
     public function saveSupplier(Request $request)
     {
         $supplier = new Supplier();
 
         // upload image to storage
-        if ($request->hasFile('photo')) {
-            $image = $request->file('photo');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/suppliers/'), $image_name);
-            $supplier->photo = $image_name;
-        } else if ($request->photo) {
-            $base64_string = $request->photo;
-            $image = base64_decode($base64_string);
-
-            $file_name = time() . '.' . 'png';
-            $file_path = public_path('images/suppliers/' . $file_name);
-            file_put_contents($file_path, $image);
-            $supplier->photo = $file_name;
-        }
+//        if ($request->hasFile('photo')) {
+//            $image = $request->file('photo');
+//            $image_name = time() . '.' . $image->getClientOriginalExtension();
+//            $image->move(public_path('images/suppliers/'), $image_name);
+//            $supplier->photo = $image_name;
+//        } else if ($request->photo) {
+//            $base64_string = $request->photo;
+//            $image = base64_decode($base64_string);
+//
+//            $file_name = time() . '.' . 'png';
+//            $file_path = public_path('images/suppliers/' . $file_name);
+//            file_put_contents($file_path, $image);
+//            $supplier->photo = $file_name;
+//        }
+        $imagePath = $request->file('photo')->getRealPath();
+        $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+        $supplier->photo = $uploadedImage;
         $supplier->name = $request->name;
         $supplier->email = $request->email;
         $supplier->phone = $request->phone;

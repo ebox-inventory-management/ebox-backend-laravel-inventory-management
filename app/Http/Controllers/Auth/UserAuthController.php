@@ -11,8 +11,31 @@ class UserAuthController extends Controller
 
     public function show()
     {
+        $users = User::all();
+        return response()->json([
+            "users" => $users,
+            "status" => 200,
+        ]);
+    }
 
+    public function user()
+    {
         return auth()->guard('api')->user();
+    }
+
+    public function getByChar($user_name)
+    {
+
+        $user = User::where('name', 'like', '%' . $user_name . '%')->get();
+
+        if ($user) {
+            return response()->json([
+                "users" => $user,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'user not found'], 404);
+        }
     }
 
     public function register(Request $request)

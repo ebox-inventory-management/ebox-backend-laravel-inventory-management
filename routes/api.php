@@ -114,4 +114,6 @@ Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/user/{id}', [UserAuthController::class, 'update']);
 Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
-Route::get('/user', [UserAuthController::class, 'show']);
+Route::get('/user', [UserAuthController::class, 'user']);
+Route::get('/show', [UserAuthController::class, 'show']);
+Route::get("user/search/{user_name}", [UserAuthController::class, "getByChar"])->name("searchUserName");
