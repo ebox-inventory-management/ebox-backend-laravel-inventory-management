@@ -39,4 +39,8 @@ WORKDIR /var/www
 # Copy custom configurations PHP
 COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
+ADD . /var/www
+
+RUN chown -R www-data:www-data /var/www
+
 USER $user
