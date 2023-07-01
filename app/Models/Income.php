@@ -10,11 +10,8 @@ class Income extends Model
     use HasFactory;
 
 
-    protected $fillable=[
-        "income_details",
+    protected $fillable = [
         "income_amount",
-        "date",
-        "month",
-        "year",
+
     ];
 }
