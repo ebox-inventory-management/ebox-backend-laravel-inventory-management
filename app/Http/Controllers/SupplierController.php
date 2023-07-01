@@ -13,7 +13,7 @@ use Faker\Provider\Image;
 
 class SupplierController extends Controller
 {
-//    protected function uploadSupplierImage($request)
+    //    protected function uploadSupplierImage($request)
 //    {
 //        $supplierImage = $request->file('photo');
 //        $imageType = $supplierImage->getClientOriginalExtension();
@@ -29,7 +29,7 @@ class SupplierController extends Controller
     {
         $supplier = new Supplier();
 
-        // upload image to storage
+        // upload image to storage for local
 //        if ($request->hasFile('photo')) {
 //            $image = $request->file('photo');
 //            $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -44,9 +44,22 @@ class SupplierController extends Controller
 //            file_put_contents($file_path, $image);
 //            $supplier->photo = $file_name;
 //        }
-        $imagePath = $request->file('photo')->getRealPath();
-        $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
-        $supplier->photo = $uploadedImage;
+
+        // upload image to storage for Cloudinary
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $supplier->photo = $uploadedImage;
+        } else if ($request->photo) {
+            $imageBase64 = $request->photo;
+            $image = base64_decode($imageBase64);
+
+            $uploadedImage = Cloudinary::upload($image);
+            dd($uploadedImage);
+            $supplier->photo = $uploadedImage;
+        }
+
+
         $supplier->name = $request->name;
         $supplier->email = $request->email;
         $supplier->phone = $request->phone;
