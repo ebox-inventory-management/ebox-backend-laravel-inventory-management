@@ -25,6 +25,7 @@ class ExportController extends Controller
             $export = new Export();
             $export->product_id = $id;
             $export->product_name = $product->product_name;
+            $export->product_image = $product->product_image;
 
             $export->export_quantity = $request->product_quantity;
             $export->total_export_price = $product->export_price * $export->export_quantity;
@@ -45,8 +46,8 @@ class ExportController extends Controller
         } else {
             return response()->json([
                 "message" => "Cannot export product",
-                "status" => 400,
-            ]);
+                "status" => 404,
+            ], 404);
         }
 
 
@@ -64,8 +65,9 @@ class ExportController extends Controller
         ]);
     }
 
-    public function getExportByProductID($id){
-        $export = Export::where('product_id',  $id )->get();
+    public function getExportByProductID($id)
+    {
+        $export = Export::where('product_id', $id)->get();
         return response()->json([
             "exports" => $export,
             "status" => 200,

@@ -10,42 +10,46 @@ use App\Models\Import;
 use App\Models\Income;
 use App\Models\Products;
 
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Faker\Provider\Image;
 
 class ProductController extends Controller
 {
-    protected function uploadProductImage($request)
-    {
-        $productImage = $request->file('product_image');
-        //        $imageType = $productImage->file('file');
-        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
-        $directory = 'inventory/product-images/';
-        $imageUrl = $directory . $imageName;
-        Image::imageUrl($imageUrl);
-        return $imageUrl;
-
-    }
+//    protected function uploadProductImage($request)
+//    {
+//        $productImage = $request->file('product_image');
+//        //        $imageType = $productImage->file('file');
+//        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
+//        $directory = 'inventory/product-images/';
+//        $imageUrl = $directory . $imageName;
+//        Image::imageUrl($imageUrl);
+//        return $imageUrl;
+//
+//    }
 
     public function saveProduct(Request $request)
     {
         $product = new Products();
 
         // upload image to storage
-        if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/products/'), $image_name);
-            $product->product_image = $image_name;
-        } else if ($request->product_image) {
-            $base64_string = $request->product_image;
-            $image = base64_decode($base64_string);
-
-            $file_name = time() . '.' . 'png';
-            $file_path = public_path('images/products/' . $file_name);
-            file_put_contents($file_path, $image);
-            $product->product_image = $file_name;
-        }
+//        if ($request->hasFile('product_image')) {
+//            $image = $request->file('product_image');
+//            $image_name = time() . '.' . $image->getClientOriginalExtension();
+//            $image->move(public_path('images/products/'), $image_name);
+//            $product->product_image = $image_name;
+//        } else if ($request->product_image) {
+//            $base64_string = $request->product_image;
+//            $image = base64_decode($base64_string);
+//
+//            $file_name = time() . '.' . 'png';
+//            $file_path = public_path('images/products/' . $file_name);
+//            file_put_contents($file_path, $image);
+//            $product->product_image = $file_name;
+//        }
+        $imagePath = $request->file('product_image')->getRealPath();
+        $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+        $product->product_image = $uploadedImage;
 
         $product->category_id = $request->category_id;
         $product->supplier_id = $request->supplier_id;
