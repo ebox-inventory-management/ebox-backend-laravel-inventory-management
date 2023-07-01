@@ -2,12 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SaveProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\Models\Customer;
-use App\Models\Export;
-use App\Models\Import;
-use App\Models\Income;
+
 use App\Models\Products;
 
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -16,7 +11,7 @@ use Faker\Provider\Image;
 
 class ProductController extends Controller
 {
-//    protected function uploadProductImage($request)
+    //    protected function uploadProductImage($request)
 //    {
 //        $productImage = $request->file('product_image');
 //        //        $imageType = $productImage->file('file');
@@ -47,10 +42,16 @@ class ProductController extends Controller
 //            file_put_contents($file_path, $image);
 //            $product->product_image = $file_name;
 //        }
-        $imagePath = $request->file('product_image')->getRealPath();
-        $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
-        $product->product_image = $uploadedImage;
-
+        // upload image to storage for Cloudinary
+        if ($request->hasFile('product_image')) {
+            $imagePath = $request->file('product_image')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $product->product_image = $uploadedImage;
+        } else if ($request->product_image) {
+            $imageBase64 = $request->product_image;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $product->product_image = $uploadedImage;
+        }
         $product->category_id = $request->category_id;
         $product->supplier_id = $request->supplier_id;
         $product->brand_id = $request->brand_id;
@@ -137,27 +138,54 @@ class ProductController extends Controller
         $data['import_price'] = $request->import_price;
         $data['export_price'] = $request->export_price;
 
-        if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/products/'), $image_name);
-            $data['product_image'] = $image_name; // remove old image
-            $old_image = public_path('images/products/' . $product->product_image);
-            if (file_exists($old_image)) {
-                @unlink($old_image);
-            }
-        } else if ($request->product_image) {
-            $base64_string = $request->product_image;
-            $image = base64_decode($base64_string);
+        // if ($request->hasFile('product_image')) {
+        //     $image = $request->file('product_image');
+        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
+        //     $image->move(public_path('images/products/'), $image_name);
+        //     $data['product_image'] = $image_name; // remove old image
+        //     $old_image = public_path('images/products/' . $product->product_image);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // } else if ($request->product_image) {
+        //     $base64_string = $request->product_image;
+        //     $image = base64_decode($base64_string);
 
-            $file_name = time() . '.' . 'png';
-            $file_path = public_path('images/products/' . $file_name);
-            file_put_contents($file_path, $image);
-            $data['product_image'] = $file_name; // remove old image
-            $old_image = public_path('images/products/' . $product->product_image);
-            if (file_exists($old_image)) {
-                @unlink($old_image);
+        //     $file_name = time() . '.' . 'png';
+        //     $file_path = public_path('images/products/' . $file_name);
+        //     file_put_contents($file_path, $image);
+        //     $data['product_image'] = $file_name; // remove old image
+        //     $old_image = public_path('images/products/' . $product->product_image);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // }
+
+        // upload image to storage for Cloudinary
+        if ($request->hasFile('product_image')) {
+
+            //check if old image exist
+            $old_image = Cloudinary::getImage($product->product_image);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
             }
+
+            //set image to response json
+            $imagePath = $request->file('product_image')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $data['product_image'] = $uploadedImage;
+
+
+        } else if ($request->product_image) {
+            //check if old image exist
+            $old_image = Cloudinary::getImage($product->product_image);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
+            }
+            //set image to response json
+            $imageBase64 = $request->product_image;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $data['product_image'] = $uploadedImage;
         }
 
         $product->update($data);

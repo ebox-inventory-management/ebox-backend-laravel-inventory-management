@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class UserAuthController extends Controller
 {
@@ -61,19 +62,30 @@ class UserAuthController extends Controller
 
 
         // upload image to storage
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/users/'), $image_name);
-            $data['image'] = $image_name;
-        } else if ($request->image) {
-            $base64_string = $request->image;
-            $image = base64_decode($base64_string);
+        // if ($request->hasFile('image')) {
+        //     $image = $request->file('image');
+        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
+        //     $image->move(public_path('images/users/'), $image_name);
+        //     $data['image'] = $image_name;
+        // } else if ($request->image) {
+        //     $base64_string = $request->image;
+        //     $image = base64_decode($base64_string);
 
-            $file_name = time() . '.' . 'png';
-            $file_path = public_path('images/users/' . $file_name);
-            file_put_contents($file_path, $image);
-            $data['image'] = $file_name;
+        //     $file_name = time() . '.' . 'png';
+        //     $file_path = public_path('images/users/' . $file_name);
+        //     file_put_contents($file_path, $image);
+        //     $data['image'] = $file_name;
+        // }
+
+        // upload image to storage for Cloudinary
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $data['image'] = $uploadedImage;
+        } else if ($request->image) {
+            $imageBase64 = $request->image;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $data['image'] = $uploadedImage;
         }
 
 
@@ -127,30 +139,58 @@ class UserAuthController extends Controller
             ], 400);
         }
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/users/'), $image_name);
-            $data['image'] = $image_name;
-            // remove old image
-            $old_image = public_path('images/users/' . $user->image);
-            if (file_exists($old_image)) {
-                @unlink($old_image);
-            }
-        } else if ($request->image) {
-            $base64_string = $request->image;
-            $image = base64_decode($base64_string);
+        // if ($request->hasFile('image')) {
+        //     $image = $request->file('image');
+        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
+        //     $image->move(public_path('images/users/'), $image_name);
+        //     $data['image'] = $image_name;
+        //     // remove old image
+        //     $old_image = public_path('images/users/' . $user->image);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // } else if ($request->image) {
+        //     $base64_string = $request->image;
+        //     $image = base64_decode($base64_string);
 
-            $file_name = time() . '.' . 'png';
-            $file_path = public_path('images/users/' . $file_name);
-            file_put_contents($file_path, $image);
-            $data['image'] = $file_name;
-            // remove old image
-            $old_image = public_path('images/users/' . $user->image);
-            if (file_exists($old_image)) {
-                @unlink($old_image);
+        //     $file_name = time() . '.' . 'png';
+        //     $file_path = public_path('images/users/' . $file_name);
+        //     file_put_contents($file_path, $image);
+        //     $data['image'] = $file_name;
+        //     // remove old image
+        //     $old_image = public_path('images/users/' . $user->image);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // }
+
+        // upload image to storage for Cloudinary
+        if ($request->hasFile('image')) {
+
+            //check if old image exist
+            $old_image = Cloudinary::getImage($user->image);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
             }
+
+            //set image to response json
+            $imagePath = $request->file('image')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $data['image'] = $uploadedImage;
+
+
+        } else if ($request->image) {
+            //check if old image exist
+            $old_image = Cloudinary::getImage($user->image);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
+            }
+            //set image to response json
+            $imageBase64 = $request->image;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $data['image'] = $uploadedImage;
         }
+
         if ($user) {
             $user->update($data);
             return response(['user' => $user, 'message' => 'Success'], 200);
