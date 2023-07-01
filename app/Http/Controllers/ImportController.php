@@ -18,6 +18,7 @@ class ImportController extends Controller
         $import = new Import();
         $import->product_id = $id;
         $import->product_name = $product->product_name;
+        $import->product_image = $product->product_image;
 
         if ($product->product_quantity + $request->product_quantity > 0) {
             $product->product_quantity = $product->product_quantity + $request->product_quantity;
