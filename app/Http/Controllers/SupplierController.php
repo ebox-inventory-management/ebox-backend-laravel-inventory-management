@@ -169,8 +169,20 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
 
-        //if($supplier->photo) unlink($supplier->photo);
-        $supplier->delete();
+        if ($supplier->products->isEmpty()) {
+            // do something if there are no products
+            $supplier->delete();
+            //check if old image exist
+            $old_image = Cloudinary::getImage($supplier->photo);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
+            }
+        } else {
+            // do something if there are products
+            return response()->json([
+                "message" => "Products exist!",
+            ], 404);
+        }
         return response()->json([
             "message" => "Supplier removed successfully!",
             "status" => 200,
