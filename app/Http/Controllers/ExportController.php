@@ -16,6 +16,8 @@ class ExportController extends Controller
     public function saveExport(Request $request, $id)
     {
 
+
+
         $product = Products::findOrFail($id);
         if ($product->product_quantity >= 0 && $product->product_quantity >= $request->product_quantity) {
             $product->product_quantity = $product->product_quantity - $request->product_quantity;
@@ -45,7 +47,7 @@ class ExportController extends Controller
             ]);
         } else {
             return response()->json([
-                "message" => "Cannot export product",
+                "message" => "Cannot export product since the product has only $product->product_quantity",
                 "status" => 404,
             ], 404);
         }
