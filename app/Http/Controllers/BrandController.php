@@ -67,7 +67,16 @@ class BrandController extends Controller
     public function deleteBrand($id)
     {
         $brand = Brand::findOrFail($id);
-        $brand->delete();
+
+        if ($brand->products->isEmpty()) {
+            // do something if there are no products
+            $brand->delete();
+        } else {
+            // do something if there are products
+            return response()->json([
+                "message" => "Products exist!",
+            ], 404);
+        }
 
         return response()->json([
             "message" => "Brand deleted successfully!",
