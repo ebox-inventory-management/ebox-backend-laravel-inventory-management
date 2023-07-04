@@ -125,10 +125,10 @@ Route::group([
     Route::get("products/category/brand/{cat_id}/{brand_id}", [ProductController::class, "getProductByCategoryAndBrand"])->name("productsByCategoryAndBrand");
     Route::get("products/category/supplier/{cat_id}/{sup_id}", [ProductController::class, "getProductByCategoryAndSupplier"])->name("productsByCategoryAndSupplier");
 
-
-
     Route::post('/user/{id}', [UserAuthController::class, 'update'])->middleware('admin_access');
     Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
-    Route::get('/show', [UserAuthController::class, 'show'])->middleware('admin_access');
+    Route::get('/user/show', [UserAuthController::class, 'show'])->middleware('admin_access');
     Route::get("user/search/{user_name}", [UserAuthController::class, "getByChar"])->middleware('admin_access')->name("searchUserName");
+    Route::delete("user/delete/{id}", [UserAuthController::class, "delete"])->middleware('admin_access')->name("delete");
+
 });
