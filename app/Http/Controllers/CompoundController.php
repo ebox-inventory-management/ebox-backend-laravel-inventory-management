@@ -10,7 +10,7 @@ class CompoundController extends Controller
 {
     public function store(Request $request)
     {
-//            $request->validate([
+        //            $request->validate([
 //                'name' => 'required|string',
 //                'products' => 'required|array',
 //                'products.*.id' => 'required|exists:products,id',
@@ -66,5 +66,41 @@ class CompoundController extends Controller
         }
 
         return response()->json($compoundProduct);
+    }
+    public function delete($id)
+    {
+        $compound = Compound::findOrFail($id);
+
+        $compound->delete();
+
+        return response()->json([
+            "message" => "Compound deleted successfully!",
+            "status" => 200
+        ]);
+
+    }
+    public function getCompounds()
+    {
+        $compound = Compound::all();
+
+        return response()->json([
+            "compounds" => $compound,
+            "status" => 200
+        ]);
+
+    }
+    public function getByChar($compound_name)
+    {
+
+        $compound = Compound::where('name', 'like', '%' . $compound_name . '%')->get();
+
+        if ($compound) {
+            return response()->json([
+                "compounds" => $compound,
+                "status" => 200,
+            ]);
+        } else {
+            return response()->json(['error' => 'compound not found'], 404);
+        }
     }
 }
