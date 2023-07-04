@@ -6,6 +6,7 @@ use App\Http\Requests\SaveCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Category;
 use App\Models\Customer;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Faker\Provider\Image;
 use Illuminate\Http\Request;
 
@@ -13,28 +14,52 @@ class CustomerController extends Controller
 {
 
 
-    protected function uploadCustomerImage($request)
-    {
-        $customerImage = $request->file('photo');
-        $imageType = $customerImage->getClientOriginalExtension();
-        $imageName = rand(100, 100000) . $request->name . '.' . $imageType;
-        $directory = 'inventory/customer-images/';
-        $imageUrl = $directory . $imageName;
-        Image::make($customerImage)->save($imageUrl);
-        return $imageUrl;
-    }
+    //    protected function uploadCustomerImage($request)
+//    {
+//        $customerImage = $request->file('photo');
+//        $imageType = $customerImage->getClientOriginalExtension();
+//        $imageName = rand(100, 100000) . $request->name . '.' . $imageType;
+//        $directory = 'inventory/customer-images/';
+//        $imageUrl = $directory . $imageName;
+//        Image::make($customerImage)->save($imageUrl);
+//        return $imageUrl;
+//    }
 
     public function saveCustomer(Request $request)
     {
         $customer = new Customer();
 
         // upload image to storage
+//        if ($request->hasFile('photo')) {
+//            $image = $request->file('photo');
+//            $image_name = time() . '.' . $image->getClientOriginalExtension();
+//            $image->move(public_path('images/customers/'), $image_name);
+//            $customer->photo = $image_name;
+//        } else if ($request->photo) {
+//            $base64_string = $request->photo;
+//            $image = base64_decode($base64_string);
+//
+//            $file_name = time() . '.' . 'png';
+//            $file_path = public_path('images/customers/' . $file_name);
+//            file_put_contents($file_path, $image);
+//            $customer->photo = $file_name;
+//        }
+//        $cloudinary = new Cloudinary();
+//        $image = $request->file('photo');
+//        $result = $cloudinary->uploadApi()->upload($image->getRealPath());
+
+        // upload image to storage for Cloudinary
         if ($request->hasFile('photo')) {
-            $image = $request->file('photo');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
-            $customer->photo = $image_name;
+            $imagePath = $request->file('photo')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $customer->photo = $uploadedImage;
+        } else if ($request->photo) {
+            $imageBase64 = $request->photo;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $customer->photo = $uploadedImage;
         }
+
+
         $customer->name = $request->name;
         $customer->email = $request->email;
         $customer->phone = $request->phone;
@@ -83,16 +108,54 @@ class CustomerController extends Controller
         $data['bank_number'] = $request->bank_number;
 
 
+        // if ($request->hasFile('photo')) {
+        //     $image = $request->file('photo');
+        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
+        //     $image->move(public_path('images/customers/'), $image_name);
+        //     $data['photo'] = $image_name; // remove old image
+        //     $old_image = public_path('images/customers/' . $customer->photo);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // } else if ($request->photo) {
+        //     $base64_string = $request->photo;
+        //     $image = base64_decode($base64_string);
+
+        //     $file_name = time() . '.' . 'png';
+        //     $file_path = public_path('images/customers/' . $file_name);
+        //     file_put_contents($file_path, $image);
+        //     $data['photo'] = $file_name; // remove old image
+        //     $old_image = public_path('images/customers/' . $customer->photo);
+        //     if (file_exists($old_image)) {
+        //         @unlink($old_image);
+        //     }
+        // }
+
+        // upload image to storage for Cloudinary
         if ($request->hasFile('photo')) {
-            $image = $request->file('photo');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $image_name);
-            $data['photo'] = $image_name;
-            // remove old image
-            $old_image = public_path('images/' . $customer->photo);
-            if (file_exists($old_image)) {
-                @unlink($old_image);
+
+            //check if old image exist
+            $old_image = Cloudinary::getImage($customer->photo);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
             }
+
+            //set image to response json
+            $imagePath = $request->file('photo')->getRealPath();
+            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+            $data['photo'] = $uploadedImage;
+
+
+        } else if ($request->photo) {
+            //check if old image exist
+            $old_image = Cloudinary::getImage($customer->photo);
+            if ($old_image->getPublicId() != null) {
+                Cloudinary::destroy($old_image->getPublicId());
+            }
+            //set image to response json
+            $imageBase64 = $request->photo;
+            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+            $data['photo'] = $uploadedImage;
         }
         $customer->update($data);
         return response()->json([

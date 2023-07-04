@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+/vendor/
+composer.lock
+/.idea
+/.docker
+=======
 /.phpunit.cache
 /node_modules
 /public/build
@@ -16,3 +22,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+>>>>>>> 7e2eceb27fc10bbb74b93868b5d1fbd626f451f0

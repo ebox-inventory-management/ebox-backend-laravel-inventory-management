@@ -11,10 +11,10 @@ class RevenueController extends Controller
 {
     public function getRevenues()
     {
-        $Expense = Revenue::sum('revenue');
+        $Revenue = Revenue::sum('revenue');
         return response()->json([
-            "Total Revenue" =>$Expense,
-            "status"=>200,
+            "Total Revenue" => $Revenue,
+            "status" => 200,
         ]);
     }
 
@@ -22,16 +22,16 @@ class RevenueController extends Controller
     public function getTodayRevenue()
     {
 
-        $todayExpense = Revenue::whereDate('created_at', today())->sum('revenue');
-        return response()->json(['today_expense' => $todayExpense]);
+        $todayRevenue = Revenue::whereDate('created_at', today())->sum('revenue');
+        return response()->json(['today_revenue' => $todayRevenue]);
     }
 
     public function getMonthRevenue()
     {
         $now = Carbon::now();
-        $summonthExpense = Revenue::whereMonth('created_at', $now->month)->sum('revenue');
+        $sumMonthRevenue = Revenue::whereMonth('created_at', $now->month)->sum('revenue');
         return response()->json([
-            "total"=> $summonthExpense,
+            "total" => $sumMonthRevenue,
             'status' => 200
         ]);
     }
@@ -40,10 +40,10 @@ class RevenueController extends Controller
     public function getYearRevenue()
     {
         $now = Carbon::now();
-        $sumyearIncome = Revenue::whereYear('created_at', $now->year)->sum('revenue');
+        $sumYearRevenue = Revenue::whereYear('created_at', $now->year)->sum('revenue');
         return response()->json([
 
-            "total" => $sumyearIncome,
+            "total" => $sumYearRevenue,
             'status' => 200
         ]);
     }
@@ -60,8 +60,8 @@ class RevenueController extends Controller
             ->get();
 
         return response()->json([
-            "ExpenseInRange" => $revenueInRange,
-            "total_expense" => $total_revenue,
+            "RevenueInRange" => $revenueInRange,
+            "total_revenue" => $total_revenue,
             'status' => 200
         ]);
     }

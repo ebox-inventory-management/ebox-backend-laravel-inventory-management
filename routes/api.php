@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\Auth\UserAuthController;
 
+use App\Http\Controllers\CompoundController;
+use App\Http\Controllers\CompoundProductController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\StockAlertController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
@@ -25,6 +28,12 @@ use App\Http\Controllers\SupplierController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//Stock Alert
+Route::get('/stockalert', [StockAlertController::class, 'checkStockAlert']);
+
+//compound product
+Route::post('/compound-products', [CompoundController::class, 'store']);
+Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
 
 //Customer
 Route::post("customer/add", [CustomerController::class, "saveCustomer"])->name("add-customer");
@@ -90,10 +99,12 @@ Route::get("income/year", [IncomeController::class, "getYearIncome"])->name("yea
 //Import
 Route::post("import/add/{id}", [ImportController::class, "saveImport"])->name("addImport");
 Route::get("imports", [ImportController::class, "getImports"])->name("Imports");
+Route::get("import/{id}", [ImportController::class, "getImportByProductID"])->name("getImportByProductID");
 
 //Export
 Route::post("export/add/{id}", [ExportController::class, "saveExport"])->name("addExport");
 Route::get("exports", [ExportController::class, "getExports"])->name("Exports");
+Route::get("export/{id}", [ExportController::class, "getExportByProductID"])->name("getExportByProductID");
 
 //Revenue
 Route::get("revenues", [RevenueController::class, "getRevenues"])->name("Revenues");
@@ -112,4 +123,6 @@ Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/user/{id}', [UserAuthController::class, 'update']);
 Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
-Route::get('/user', [UserAuthController::class, 'show']);
+Route::get('/user', [UserAuthController::class, 'user']);
+Route::get('/show', [UserAuthController::class, 'show']);
+Route::get("user/search/{user_name}", [UserAuthController::class, "getByChar"])->name("searchUserName");
