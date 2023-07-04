@@ -34,14 +34,14 @@ class ExpenseController extends Controller
     public function getTodayExpense()
     {
 
-        $todayExpense = Import::whereDate('created_at', today())->sum('total_import_price');
+        $todayExpense = Expense::whereDate('created_at', today())->sum('expense_amount');
         return response()->json(['today_expense' => $todayExpense]);
     }
 
     public function getMonthExpense()
     {
         $now = Carbon::now();
-        $summonthExpense = Import::whereMonth('created_at', $now->month)->sum('total_import_price');
+        $summonthExpense = Expense::whereMonth('created_at', $now->month)->sum('expense_amount');
         return response()->json([
             "total" => $summonthExpense,
             'status' => 200
@@ -52,7 +52,7 @@ class ExpenseController extends Controller
     public function getYearExpense()
     {
         $now = Carbon::now();
-        $sumyearIncome = Import::whereYear('created_at', $now->year)->sum('total_import_price');
+        $sumyearIncome = Expense::whereYear('created_at', $now->year)->sum('expense_amount');
         return response()->json([
 
             "total" => $sumyearIncome,

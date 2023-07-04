@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\Auth\UserAuthController;
 
+use App\Http\Controllers\CompoundController;
+use App\Http\Controllers\CompoundProductController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\StockAlertController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
@@ -25,6 +28,12 @@ use App\Http\Controllers\SupplierController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//Stock Alert
+Route::get('/stockalert', [StockAlertController::class, 'checkStockAlert']);
+
+//compound product
+Route::post('/compound-products', [CompoundController::class, 'store']);
+Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
 
 //Customer
 Route::post("customer/add", [CustomerController::class, "saveCustomer"])->name("add-customer");

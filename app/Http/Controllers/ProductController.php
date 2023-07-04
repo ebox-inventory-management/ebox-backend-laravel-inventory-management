@@ -62,6 +62,8 @@ class ProductController extends Controller
         $product->expire_date = $request->expire_date;
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
+        $product->description = $request->description;
+        $product->url = "https://careerkh.org/product/name/$request->product_name";
 
         $product->save();
         return response()->json([
