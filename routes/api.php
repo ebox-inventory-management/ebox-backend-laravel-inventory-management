@@ -29,7 +29,9 @@ use App\Http\Controllers\SupplierController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::post('/register', [UserAuthController::class, 'register']);
+Route::post('/login', [UserAuthController::class, 'login']);
+Route::get('/user', [UserAuthController::class, 'user']);
 Route::group([
     'middleware' => 'auth:api'
 ], function () {
@@ -46,7 +48,7 @@ Route::group([
     Route::get('/stockalert', [StockAlertController::class, 'checkStockAlert']);
 
     //compound product
-    Route::post('/compound-products', [CompoundController::class, 'store']);
+    Route::post('/compound-products', [CompoundController::class, 'store'])->middleware('admin_access');
     Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
 
     //Customer
@@ -124,11 +126,9 @@ Route::group([
     Route::get("products/category/supplier/{cat_id}/{sup_id}", [ProductController::class, "getProductByCategoryAndSupplier"])->name("productsByCategoryAndSupplier");
 
 
-    Route::post('/register', [UserAuthController::class, 'register']);
-    Route::post('/login', [UserAuthController::class, 'login']);
+
     Route::post('/user/{id}', [UserAuthController::class, 'update'])->middleware('admin_access');
     Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
-    Route::get('/user', [UserAuthController::class, 'user']);
     Route::get('/show', [UserAuthController::class, 'show'])->middleware('admin_access');
     Route::get("user/search/{user_name}", [UserAuthController::class, "getByChar"])->middleware('admin_access')->name("searchUserName");
 });
