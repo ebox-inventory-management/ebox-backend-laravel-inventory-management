@@ -38,18 +38,21 @@ Route::group([
     //Product
     Route::post("product/add", [ProductController::class, "saveProduct"])->middleware('admin_access')->name("addProduct");
     Route::get("products", [ProductController::class, "getProducts"])->name("products");
-    Route::post("product/update/{id}", [ProductController::class, "updateProduct"])->name("editProduct");
+    Route::post("product/update/{id}", [ProductController::class, "updateProduct"])->middleware('admin_access')->name("editProduct");
     Route::get("product/view/{id}", [ProductController::class, "getProduct"])->name("viewProduct");
     Route::get("product/name/{product_name}", [ProductController::class, "getByName"])->name("viewProductName");
     Route::get("product/search/{product_name}", [ProductController::class, "getByChar"])->name("searchProductName");
     Route::delete("product/delete/{id}", [ProductController::class, "deleteProduct"])->middleware('admin_access')->name("deleteProduct");
 
     //Stock Alert
-    Route::get('/stockalert', [StockAlertController::class, 'checkStockAlert']);
+    Route::get('/stockAlert', [StockAlertController::class, 'checkStockAlert']);
 
     //compound product
     Route::post('/compound-products', [CompoundController::class, 'store'])->middleware('admin_access');
     Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
+    Route::delete("compound/delete/{id}", [CompoundController::class, "delete"])->middleware('admin_access')->name("delete");
+    Route::get("compounds", [CompoundController::class, "getCompounds"])->name("compounds");
+    Route::get("compound/search/{compound_name}", [CompoundController::class, "getByChar"])->name("searchCompoundName");
 
     //Customer
     Route::post("customer/add", [CustomerController::class, "saveCustomer"])->middleware('admin_access')->name("add-customer");
@@ -126,7 +129,7 @@ Route::group([
     Route::get("products/category/supplier/{cat_id}/{sup_id}", [ProductController::class, "getProductByCategoryAndSupplier"])->name("productsByCategoryAndSupplier");
 
     Route::post('/user/{id}', [UserAuthController::class, 'update'])->middleware('admin_access');
-    Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:api');
+    Route::post('/logout', [UserAuthController::class, 'logout']);
     Route::get('/user/show', [UserAuthController::class, 'show'])->middleware('admin_access');
     Route::get("user/search/{user_name}", [UserAuthController::class, "getByChar"])->middleware('admin_access')->name("searchUserName");
     Route::delete("user/delete/{id}", [UserAuthController::class, "delete"])->middleware('admin_access')->name("delete");
