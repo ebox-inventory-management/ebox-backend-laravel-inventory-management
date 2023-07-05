@@ -65,7 +65,10 @@ class CompoundController extends Controller
             return response()->json(['message' => 'Compound product not found'], 404);
         }
 
-        return response()->json($compoundProduct);
+        return response()->json([
+            "compound" => $compoundProduct,
+            "status" => 200
+        ]);
     }
     public function delete($id)
     {
