@@ -16,7 +16,7 @@ class AdminAccessMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->user()->role !== config('settings.roles.admin')) {
-            return response()->json(["message" => "You are not admin!"], 400);
+            return response()->json(["message" => "Sorry! Only Admin can access."], 400);
         }
         return $next($request);
     }

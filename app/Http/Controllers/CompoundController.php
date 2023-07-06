@@ -11,47 +11,50 @@ class CompoundController extends Controller
     public function store(Request $request)
     {
         //            $request->validate([
-//                'name' => 'required|string',
-//                'products' => 'required|array',
-//                'products.*.id' => 'required|exists:products,id',
-//                'products.*.quantity' => 'required|integer|min:1',
-//            ]);
+        //                'name' => 'required|string',
+        //                'products' => 'required|array',
+        //                'products.*.id' => 'required|exists:products,id',
+        //                'products.*.quantity' => 'required|integer|min:1',
+        //            ]);
         $compound = Compound::where('name', $request->name)->first();
         if ($compound) {
             return response()->json([
                 'data' => 'Compound name already existed'
             ], 400);
-        }
+        } else {
+            if ($request->name == null) {
+                return response()->json([
+                    'data' => 'Please enter compound name'
+                ], 400);
+            }
 
+            if ($request->price == null) {
+                return response()->json([
+                    'data' => 'Please enter compound price'
+                ], 400);
+            }
+            if ($request->description == null) {
+                return response()->json([
+                    'data' => 'Please enter compound description'
+                ], 400);
+            }
+            if ($request->input('products') == null) {
+                return response()->json([
+                    'data' => 'Error, Empty product!'
+                ], 400);
+            }
 
+            $compoundProduct = Compound::create([
+                'name' => $request->input('name'),
+                'price' => $request->input('price'),
+                'description' => $request->input('description'),
+            ]);
 
-        if ($request->name == null) {
-            return response()->json([
-                'data' => 'Please enter compound name'
-            ], 400);
-        }
-
-        if ($request->price == null) {
-            return response()->json([
-                'data' => 'Please enter compound price'
-            ], 400);
-        }
-        if ($request->description == null) {
-            return response()->json([
-                'data' => 'Please enter compound description'
-            ], 400);
-        }
-
-        $compoundProduct = Compound::create([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description'),
-        ]);
-
-        foreach ($request->input('products') as $productData) {
-            $product = Products::find($productData['id']);
-            $product_quantity = $productData['product_quantity'];
-            $compoundProduct->products()->attach($product, ['product_quantity' => $product_quantity]);
+            foreach ($request->input('products') as $productData) {
+                $product = Products::find($productData['id']);
+                $product_quantity = $productData['product_quantity'];
+                $compoundProduct->products()->attach($product, ['product_quantity' => $product_quantity]);
+            }
         }
 
         return response()->json(['message' => 'Compound product created successfully']);
@@ -80,7 +83,6 @@ class CompoundController extends Controller
             "message" => "Compound deleted successfully!",
             "status" => 200
         ]);
-
     }
     public function getCompounds()
     {
@@ -90,7 +92,6 @@ class CompoundController extends Controller
             "compounds" => $compound,
             "status" => 200
         ]);
-
     }
     public function getByChar($compound_name)
     {
