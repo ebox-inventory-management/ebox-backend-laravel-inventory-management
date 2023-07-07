@@ -71,7 +71,15 @@ class CategoryController extends Controller
     public function deleteCategory($id)
     {
         $category = Category::findOrFail($id);
-        $category->delete();
+        if ($category->products->isEmpty()) {
+            // do something if there are no products
+            $category->delete();
+        } else {
+            // do something if there are products
+            return response()->json([
+                "message" => "Products exist!",
+            ], 404);
+        }
         return response()->json([
             "message" => "Category removed successfully!",
             "status" => 200

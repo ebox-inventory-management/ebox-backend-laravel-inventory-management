@@ -18,8 +18,8 @@ class Products extends Model
         "expire_date",
         "import_price",
         "export_price",
+        "description",
     ];
-
 
     public function category()
     {
@@ -49,5 +49,10 @@ class Products extends Model
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function compound()
+    {
+        return $this->belongsToMany(Compound::class)->withPivot('product_quantity');
     }
 }

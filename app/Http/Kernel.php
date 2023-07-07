@@ -45,7 +45,7 @@ class Kernel extends HttpKernel
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:5000,1',
-            //These values did not change the throttle limit.
+                //These values did not change the throttle limit.
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
         ],
@@ -59,6 +59,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
+        'admin_access' => \App\Http\Middleware\AdminAccessMiddleware::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
