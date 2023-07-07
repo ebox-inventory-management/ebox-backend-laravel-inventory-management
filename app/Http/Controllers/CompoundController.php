@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Compound;
 use App\Models\Products;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 
 class CompoundController extends Controller
@@ -22,8 +23,6 @@ class CompoundController extends Controller
                 'data' => 'Compound name already existed'
             ], 400);
         }
-
-
 
         if ($request->name == null) {
             return response()->json([
@@ -56,6 +55,28 @@ class CompoundController extends Controller
 
         return response()->json(['message' => 'Compound product created successfully']);
     }
+
+
+    public function update(Request $request, $id)
+    {
+        $compound = Compound::findOrFail($id);
+        $data = $request->all();
+
+        $data['name'] = $request->name;
+        $data['price'] = $request->price;
+        $data['description'] = $request->description;
+
+        $compound->update($data);
+
+
+        return response()->json([
+            "message" => "Compound data updated successfully!",
+            "status" => 200,
+        ]);
+    }
+
+
+
 
     public function show($id)
     {

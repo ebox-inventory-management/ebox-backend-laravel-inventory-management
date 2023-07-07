@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string("product_name")->unique();
             $table->text('description')->nullable();
             $table->integer("product_quantity")->default(0);
+            $table->enum('unit',['Kilogram', 'Can', 'Pack'])->default('Kilogram');
             $table->string("product_code")->nullable();
             $table->string("product_garage")->nullable();
             $table->string("product_route")->nullable();

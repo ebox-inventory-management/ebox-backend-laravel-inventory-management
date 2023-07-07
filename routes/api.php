@@ -34,6 +34,7 @@ Route::get('/stockalert', [StockAlertController::class, 'checkStockAlert']);
 //compound product
 Route::post('/compound-products', [CompoundController::class, 'store']);
 Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
+Route::post('/compound-update/{id}', [CompoundController::class, 'update']);
 
 //Customer
 Route::post("customer/add", [CustomerController::class, "saveCustomer"])->name("add-customer");
