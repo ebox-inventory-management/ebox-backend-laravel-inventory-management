@@ -25,6 +25,16 @@ class UserAuthController extends Controller
         return auth()->guard('api')->user();
     }
 
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json([
+            "message" => "User deleted successfully!",
+            "status" => 200
+        ]);
+    }
+
     public function getByChar($user_name)
     {
 

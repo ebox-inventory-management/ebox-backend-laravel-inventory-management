@@ -12,36 +12,36 @@ use Faker\Provider\Image;
 class ProductController extends Controller
 {
     //    protected function uploadProductImage($request)
-//    {
-//        $productImage = $request->file('product_image');
-//        //        $imageType = $productImage->file('file');
-//        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
-//        $directory = 'inventory/product-images/';
-//        $imageUrl = $directory . $imageName;
-//        Image::imageUrl($imageUrl);
-//        return $imageUrl;
-//
-//    }
+    //    {
+    //        $productImage = $request->file('product_image');
+    //        //        $imageType = $productImage->file('file');
+    //        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
+    //        $directory = 'inventory/product-images/';
+    //        $imageUrl = $directory . $imageName;
+    //        Image::imageUrl($imageUrl);
+    //        return $imageUrl;
+    //
+    //    }
 
     public function saveProduct(Request $request)
     {
         $product = new Products();
 
         // upload image to storage
-//        if ($request->hasFile('product_image')) {
-//            $image = $request->file('product_image');
-//            $image_name = time() . '.' . $image->getClientOriginalExtension();
-//            $image->move(public_path('images/products/'), $image_name);
-//            $product->product_image = $image_name;
-//        } else if ($request->product_image) {
-//            $base64_string = $request->product_image;
-//            $image = base64_decode($base64_string);
-//
-//            $file_name = time() . '.' . 'png';
-//            $file_path = public_path('images/products/' . $file_name);
-//            file_put_contents($file_path, $image);
-//            $product->product_image = $file_name;
-//        }
+        //        if ($request->hasFile('product_image')) {
+        //            $image = $request->file('product_image');
+        //            $image_name = time() . '.' . $image->getClientOriginalExtension();
+        //            $image->move(public_path('images/products/'), $image_name);
+        //            $product->product_image = $image_name;
+        //        } else if ($request->product_image) {
+        //            $base64_string = $request->product_image;
+        //            $image = base64_decode($base64_string);
+        //
+        //            $file_name = time() . '.' . 'png';
+        //            $file_path = public_path('images/products/' . $file_name);
+        //            file_put_contents($file_path, $image);
+        //            $product->product_image = $file_name;
+        //        }
         // upload image to storage for Cloudinary
         if ($request->hasFile('product_image')) {
             $imagePath = $request->file('product_image')->getRealPath();
@@ -70,7 +70,6 @@ class ProductController extends Controller
             "message" => "Product added successfully!",
             "status" => 200,
         ]);
-
     }
 
     public function getProducts()
@@ -110,8 +109,6 @@ class ProductController extends Controller
 
     public function getByChar($product_name)
     {
-
-
         $products = Products::where('product_name', 'like', '%' . $product_name . '%')->get();
 
         if ($products) {
@@ -176,8 +173,6 @@ class ProductController extends Controller
             $imagePath = $request->file('product_image')->getRealPath();
             $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
             $data['product_image'] = $uploadedImage;
-
-
         } else if ($request->product_image) {
             //check if old image exist
             $old_image = Cloudinary::getImage($product->product_image);
@@ -207,8 +202,6 @@ class ProductController extends Controller
             "message" => "Product removed successfully!",
             "status" => 200,
         ]);
-
-
     }
 
     public function getProductByCategory($category_id)
