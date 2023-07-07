@@ -1,5 +1,6 @@
 @extends('app')
 @section('container')
+
     <div class="container flex items-center min-h-screen px-6 py-12 mx-auto">
         <div class="flex flex-col items-center max-w-sm mx-auto text-center">
             <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
@@ -12,3 +13,6 @@
         </div>
     </div>
 @endsection
+
+
+
