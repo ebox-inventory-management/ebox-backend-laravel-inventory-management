@@ -63,7 +63,7 @@ class ProductController extends Controller
         $product->import_price = $request->import_price;
         $product->export_price = $request->export_price;
         $product->description = $request->description;
-        $product->url = "https://careerkh.org/product/name/$request->product_name";
+        $product->url = "https://careerkh.org/$request->product_name";
 
         $product->save();
         return response()->json([
@@ -93,10 +93,21 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getByName($product_name)
+
+    public function showByName($product_name)
     {
         $product = Products::where('product_name', '=', $product_name)->first();
 
+        if ($product) {
+            return view('product.show', compact('product'));
+        } else {
+            return view('/error');
+        }
+    }
+
+    public function getByName($product_name)
+    {
+        $product = Products::where('product_name', '=', $product_name)->first();
         if ($product) {
             return response()->json([
                 "product" => $product,

@@ -21,3 +21,6 @@ use App\Http\Controllers\ProductController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get("/{product_name?}", [ProductController::class, 'showByName'])->name('showProductByName.show');
+Route::get("/error");
