@@ -29,35 +29,6 @@ class CompoundController extends Controller
                 ], 400);
             }
 
-<<<<<<< HEAD
-        if ($request->name == null) {
-            return response()->json([
-                'data' => 'Please enter compound name'
-            ], 400);
-        }
-
-        if ($request->price == null) {
-            return response()->json([
-                'data' => 'Please enter compound price'
-            ], 400);
-        }
-        if ($request->description == null) {
-            return response()->json([
-                'data' => 'Please enter compound description'
-            ], 400);
-        }
-
-        $compoundProduct = Compound::create([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description'),
-        ]);
-
-        foreach ($request->input('products') as $productData) {
-            $product = Products::find($productData['id']);
-            $product_quantity = $productData['product_quantity'];
-            $compoundProduct->products()->attach($product, ['product_quantity' => $product_quantity]);
-=======
             if ($request->price == null) {
                 return response()->json([
                     'data' => 'Please enter compound price'
@@ -85,7 +56,6 @@ class CompoundController extends Controller
                 $product_quantity = $productData['product_quantity'];
                 $compoundProduct->products()->attach($product, ['product_quantity' => $product_quantity]);
             }
->>>>>>> db5089875e282796378dff1dd512ad3094c6022c
         }
 
         return response()->json(['message' => 'Compound product created successfully']);
