@@ -56,7 +56,7 @@ Route::group([
     Route::delete("compound/delete/{id}", [CompoundController::class, "delete"])->middleware('admin_access')->name("delete");
     Route::get("compounds", [CompoundController::class, "getCompounds"])->name("compounds");
     Route::get("compound/search/{compound_name}", [CompoundController::class, "getByChar"])->name("searchCompoundName");
-    Route::post('/compound-update/{id}', [CompoundController::class, 'update']);
+    Route::post('/compound-update/{id}', [CompoundController::class, 'update'])->middleware('admin_access');
 
     //Customer
     Route::post("customer/add", [CustomerController::class, "saveCustomer"])->middleware('admin_access')->name("add-customer");
