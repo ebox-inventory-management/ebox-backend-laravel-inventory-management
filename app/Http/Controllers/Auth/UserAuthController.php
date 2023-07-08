@@ -122,8 +122,7 @@ class UserAuthController extends Controller
         }
         if (!auth()->attempt($data)) {
             return response([
-                'error_message' => 'Incorrect Details.
-            Please try again'
+                'error_message' => 'Incorrect Details. Please try again'
             ], 400);
         }
 
@@ -187,8 +186,6 @@ class UserAuthController extends Controller
             $imagePath = $request->file('image')->getRealPath();
             $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
             $data['image'] = $uploadedImage;
-
-
         } else if ($request->image) {
             //check if old image exist
             $old_image = Cloudinary::getImage($user->image);
