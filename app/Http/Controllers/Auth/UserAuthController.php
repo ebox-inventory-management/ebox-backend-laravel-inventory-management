@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
@@ -13,7 +14,9 @@ class UserAuthController extends Controller
 
     public function show()
     {
-        $users = User::all();
+        $users = DB::table('users')
+            ->whereNotIn('id', [auth()->guard('api')->user()->id])
+            ->get();
         return response()->json([
             "users" => $users,
             "status" => 200,
