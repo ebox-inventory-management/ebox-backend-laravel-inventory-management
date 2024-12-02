@@ -57,7 +57,6 @@ class UserAuthController extends Controller
     {
         $data = $request->all();
 
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
@@ -73,23 +72,6 @@ class UserAuthController extends Controller
 
         $data['password'] = bcrypt($request->password);
 
-
-        // upload image to storage
-        // if ($request->hasFile('image')) {
-        //     $image = $request->file('image');
-        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
-        //     $image->move(public_path('images/users/'), $image_name);
-        //     $data['image'] = $image_name;
-        // } else if ($request->image) {
-        //     $base64_string = $request->image;
-        //     $image = base64_decode($base64_string);
-
-        //     $file_name = time() . '.' . 'png';
-        //     $file_path = public_path('images/users/' . $file_name);
-        //     file_put_contents($file_path, $image);
-        //     $data['image'] = $file_name;
-        // }
-
         // upload image to storage for Cloudinary
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->getRealPath();
@@ -101,17 +83,27 @@ class UserAuthController extends Controller
             $data['image'] = $uploadedImage;
         }
 
-
         $user = User::create($data);
 
         $token = $user->createToken('API Token')->accessToken;
 
-        return response(['user' => $user, 'token' => $token]);
+        return response()->json([
+            'data' => [
+                'user' => $user,
+                'token' => $token
+            ],
+            'meta' => [
+                'status' => 'success',
+                'message' => 'Registration successful',
+                'timestamp' => now()->toDateTimeString(),  // Example of metadata like a timestamp
+            ]
+        ]);
     }
 
     public function login(Request $request)
     {
         $data = $request->all();
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:8',
@@ -123,15 +115,27 @@ class UserAuthController extends Controller
                 'message' => $validator->errors(),
             ], 400);
         }
+
         if (!auth()->attempt($data)) {
             return response([
                 'error_message' => 'Incorrect Details. Please try again'
             ], 400);
         }
 
-        $token = auth()->user()->createToken('API Token')->accessToken;
+        $user = auth()->user();
+        $token = $user->createToken('API Token')->accessToken;
 
-        return response(['user' => auth()->user(), 'token' => $token]);
+        return response()->json([
+            'data' => [
+                'user' => $user,
+                'token' => $token
+            ],
+            'meta' => [
+                'status' => 'success',
+                'message' => 'Login successful',
+                'timestamp' => now()->toDateTimeString()  // Example of metadata like a timestamp
+            ]
+        ]);
     }
 
     public function update(Request $request, $id)

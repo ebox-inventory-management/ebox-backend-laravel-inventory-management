@@ -32,9 +32,9 @@ use App\Http\Controllers\SupplierController;
 
 
 
-Route::post('/register', [UserAuthController::class, 'register']);
-Route::post('/login', [UserAuthController::class, 'login']);
-Route::get('/user', [UserAuthController::class, 'user']);
+Route::post('/register', [UserAuthController::class, 'register'])->name('register');
+Route::post('/login', [UserAuthController::class, 'login'])->name('login');
+Route::get('/user', [UserAuthController::class, 'user'])->name('user');
 Route::group([
     'middleware' => 'auth:api'
 ], function () {

@@ -3,45 +3,40 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Products;
 
+use App\Models\Supplier;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Faker\Provider\Image;
 
 class ProductController extends Controller
 {
-    //    protected function uploadProductImage($request)
-    //    {
-    //        $productImage = $request->file('product_image');
-    //        //        $imageType = $productImage->file('file');
-    //        $imageName = rand(100, 100000) . $request->product_name . '.jpg';
-    //        $directory = 'inventory/product-images/';
-    //        $imageUrl = $directory . $imageName;
-    //        Image::imageUrl($imageUrl);
-    //        return $imageUrl;
-    //
-    //    }
-
     public function saveProduct(Request $request)
     {
+        if (!Category::find($request->category_id)) {
+            return response()->json([
+                "message" => "Invalid category_id: The category does not exist.",
+                "status" => 422,
+            ], 422);
+        }
+        if (!Supplier::find($request->supplier_id)) {
+            return response()->json([
+                "message" => "Invalid supplier_id: The supplier does not exist.",
+                "status" => 422,
+            ], 422);
+        }
+        if (!Brand::find($request->brand_id)) {
+            return response()->json([
+                "message" => "Invalid brand_id: The brand does not exist.",
+                "status" => 422,
+            ], 422);
+        }
+
         $product = new Products();
 
-        // upload image to storage
-        //        if ($request->hasFile('product_image')) {
-        //            $image = $request->file('product_image');
-        //            $image_name = time() . '.' . $image->getClientOriginalExtension();
-        //            $image->move(public_path('images/products/'), $image_name);
-        //            $product->product_image = $image_name;
-        //        } else if ($request->product_image) {
-        //            $base64_string = $request->product_image;
-        //            $image = base64_decode($base64_string);
-        //
-        //            $file_name = time() . '.' . 'png';
-        //            $file_path = public_path('images/products/' . $file_name);
-        //            file_put_contents($file_path, $image);
-        //            $product->product_image = $file_name;
-        //        }
         // upload image to storage for Cloudinary
         if ($request->hasFile('product_image')) {
             $imagePath = $request->file('product_image')->getRealPath();
@@ -147,29 +142,6 @@ class ProductController extends Controller
         $data['expire_date'] = $request->expire_date;
         $data['import_price'] = $request->import_price;
         $data['export_price'] = $request->export_price;
-
-        // if ($request->hasFile('product_image')) {
-        //     $image = $request->file('product_image');
-        //     $image_name = time() . '.' . $image->getClientOriginalExtension();
-        //     $image->move(public_path('images/products/'), $image_name);
-        //     $data['product_image'] = $image_name; // remove old image
-        //     $old_image = public_path('images/products/' . $product->product_image);
-        //     if (file_exists($old_image)) {
-        //         @unlink($old_image);
-        //     }
-        // } else if ($request->product_image) {
-        //     $base64_string = $request->product_image;
-        //     $image = base64_decode($base64_string);
-
-        //     $file_name = time() . '.' . 'png';
-        //     $file_path = public_path('images/products/' . $file_name);
-        //     file_put_contents($file_path, $image);
-        //     $data['product_image'] = $file_name; // remove old image
-        //     $old_image = public_path('images/products/' . $product->product_image);
-        //     if (file_exists($old_image)) {
-        //         @unlink($old_image);
-        //     }
-        // }
 
         // upload image to storage for Cloudinary
         if ($request->hasFile('product_image')) {
