@@ -53,7 +53,7 @@ Route::group([
     //compound product
     Route::post('/compound-products', [CompoundController::class, 'store'])->middleware('admin_access');
     Route::get('/compound-products/{id}', [CompoundController::class, 'show']);
-    Route::delete("compound/delete/{id}", [CompoundController::class, "delete"])->middleware('admin_access')->name("delete");
+    Route::delete("compound/delete/{id}", [CompoundController::class, "delete"])->middleware('admin_access')->name("deleteCompound");
     Route::get("compounds", [CompoundController::class, "getCompounds"])->name("compounds");
     Route::get("compound/search/{compound_name}", [CompoundController::class, "getByChar"])->name("searchCompoundName");
     Route::post('/compound-update/{id}', [CompoundController::class, 'update'])->middleware('admin_access');
