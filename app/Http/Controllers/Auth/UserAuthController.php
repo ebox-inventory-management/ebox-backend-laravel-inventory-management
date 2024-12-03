@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\BaseApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,7 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 class UserAuthController extends Controller
 {
 
+    use BaseApiResponse;
     public function show()
     {
         $users = DB::table('users')
@@ -55,88 +57,123 @@ class UserAuthController extends Controller
 
     public function register(Request $request)
     {
-        $data = $request->all();
+        try {
+            // Validate the request
+            $validator = Validator::make($request->all(), [
+                'first_name' => 'required|max:255',
+                'last_name' => 'required|max:255',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:8',
+                'role' => 'nullable|string|max:15',
+                'business_name' => 'nullable|string|max:255',
+                'dob' => 'nullable|date',
+                'gender' => 'nullable|in:male,female,other',
+                'address' => 'nullable|string|max:255',
+                'contact_number' => 'nullable|string|max:20',
+                'image' => 'nullable|file|image|max:2048', // Max 2MB
+            ]);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
-        ]);
+            if ($validator->fails()) {
+                return $this->failed(
+                    $validator->errors(),
+                    'Validation Error',
+                    'Please correct the input errors.',
+                    400
+                );
+            }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+            $data = $validator->validated();
+
+            // Hash the password
+            $data['password'] = bcrypt($request->password);
+
+            // Handle image upload (Cloudinary)
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->getRealPath();
+                $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
+                $data['image'] = $uploadedImage;
+            } elseif ($request->image) {
+                $imageBase64 = $request->image;
+                $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
+                $data['image'] = $uploadedImage;
+            }
+
+            // Create the user
+            $user = User::create($data);
+
+            // Generate token
+            $token = $user->createToken('API Token')->accessToken;
+
+            return $this->successAuth(
+                $user,
+                $token,
+                'Registration Successful',
+                'You have successfully registered.',
+                200
+            );
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            return $this->failed(
+                $e->getMessage(),
+                'Server Error',
+                'An unexpected error occurred. Please try again later.',
+                500
+            );
         }
-
-        $data['password'] = bcrypt($request->password);
-
-        // upload image to storage for Cloudinary
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->getRealPath();
-            $uploadedImage = Cloudinary::upload($imagePath)->getSecurePath();
-            $data['image'] = $uploadedImage;
-        } else if ($request->image) {
-            $imageBase64 = $request->image;
-            $uploadedImage = Cloudinary::upload("data:image/png;base64," . $imageBase64)->getSecurePath();
-            $data['image'] = $uploadedImage;
-        }
-
-        $user = User::create($data);
-
-        $token = $user->createToken('API Token')->accessToken;
-
-        return response()->json([
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ],
-            'meta' => [
-                'status' => 'success',
-                'message' => 'Registration successful',
-                'timestamp' => now()->toDateTimeString(),  // Example of metadata like a timestamp
-            ]
-        ]);
     }
 
     public function login(Request $request)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
 
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+            // Validate the request
+            $validator = Validator::make($data, [
+                'email' => 'required|email',
+                'password' => 'required|min:8',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+            if ($validator->fails()) {
+                return $this->failed(
+                    null,
+                    'Validation Error',
+                    'Please correct the input errors.',
+                    400
+                );
+            }
+
+            // Attempt authentication
+            if (!auth()->attempt(['email' => $data['email'], 'password' => $data['password']])) {
+                return $this->failed(
+                    null,
+                    'Authentication Failed',
+                    'Incorrect details. Please try again.',
+                    401
+                );
+            }
+
+            // Generate token for authenticated user
+            $user = auth()->user();
+            $token = $user->createToken('API Token')->accessToken;
+
+            return $this->successAuth(
+                $user,
+                $token,
+                'Login Successful',
+                'You have successfully logged in.',
+                200
+            );
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            return $this->failed(
+                null,
+                'Server Error',
+                'An unexpected error occurred. Please try again later.',
+                500
+            );
         }
-
-        if (!auth()->attempt($data)) {
-            return response([
-                'error_message' => 'Incorrect Details. Please try again'
-            ], 400);
-        }
-
-        $user = auth()->user();
-        $token = $user->createToken('API Token')->accessToken;
-
-        return response()->json([
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ],
-            'meta' => [
-                'status' => 'success',
-                'message' => 'Login successful',
-                'timestamp' => now()->toDateTimeString()  // Example of metadata like a timestamp
-            ]
-        ]);
     }
+
 
     public function update(Request $request, $id)
     {
@@ -219,6 +256,11 @@ class UserAuthController extends Controller
         auth()->user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
-        return response(['message' => 'Logged out successfully']);
+        return $this->success(
+            null,
+            'Logout Successful',
+            'You have successfully logged out.',
+            200
+        );
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\BaseApiResponse;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
+    use BaseApiResponse;
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
@@ -14,9 +16,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        abort(response()->json([
-            'success' => false,
-            'message' => 'Unauthorized. Please log in.',
-        ], 401));
+        abort($this->failed('Unauthorized', 'Unauthorized', 'You are not authorized to access this resource', 401));
     }
 }
