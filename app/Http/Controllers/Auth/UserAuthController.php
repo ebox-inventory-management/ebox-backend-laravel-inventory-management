@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\BaseApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -83,6 +84,11 @@ class UserAuthController extends Controller
             }
 
             $data = $validator->validated();
+
+            // Format the date of birth (if provided)
+            if (!empty($data['dob'])) {
+                $data['dob'] = Carbon::parse($data['dob'])->format('Y-m-d'); // Convert to MySQL-compatible format
+            }
 
             // Hash the password
             $data['password'] = bcrypt($request->password);
